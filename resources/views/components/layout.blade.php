@@ -41,10 +41,21 @@
                     a Quote</a>
             </nav>
 
-            <button class="md:hidden focus:outline-none hover:text-brand-yellow transition-colors">
-                <i data-lucide="menu" class="w-7 h-7"></i>
+            <button id="mobile-menu-btn" class="md:hidden focus:outline-none hover:text-brand-yellow transition-colors">
+                <i id="menu-icon" data-lucide="menu" class="w-7 h-7"></i>
             </button>
         </div>
+
+        <!-- Mobile Dropdown Nav -->
+        <nav id="mobile-menu"
+            class="hidden flex-col gap-4 font-medium text-sm pt-4 pb-2 border-t border-gray-200 mt-4 md:hidden">
+            <a href="/" class="hover:text-brand-yellow transition-colors">Home</a>
+            <a href="#about" class="hover:text-brand-yellow transition-colors">About Us</a>
+            <a href="#services" class="hover:text-brand-yellow transition-colors">Services</a>
+            <a href="#contact"
+                class="bg-brand-yellow text-brand-navy px-6 py-2.5 rounded-md font-semibold hover:bg-yellow-400 transition-colors shadow-sm text-center">Get
+                a Quote</a>
+        </nav>
     </header>
 
     <main class="flex-grow">
@@ -87,7 +98,7 @@
                     </li>
                     <li class="flex items-center gap-3">
                         <i data-lucide="phone" class="w-5 h-5 text-brand-yellow"></i>
-                        [Insert Phone Number]
+                        +44 7456 490400
                     </li>
                 </ul>
             </div>
@@ -105,6 +116,33 @@
 
     <script>
         lucide.createIcons();
+    </script>
+    <script>
+        lucide.createIcons();
+
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const icon = document.getElementById('menu-icon');
+
+        btn.addEventListener('click', () => {
+            const isOpen = !menu.classList.contains('hidden');
+            menu.classList.toggle('hidden', isOpen);
+            menu.classList.toggle('flex', !isOpen);
+
+            // Swap icon between menu and X
+            icon.setAttribute('data-lucide', isOpen ? 'menu' : 'x');
+            lucide.createIcons();
+        });
+
+        // Close menu when a nav link is clicked
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
     </script>
 </body>
 
