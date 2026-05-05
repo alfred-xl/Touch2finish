@@ -1,3 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────────
+ * BASE LAYER
+ *
+ * Sets the global default text colour to brand-charcoal (#1f1f1f).
+ *
+ * WHY THIS EXISTS:
+ * The previous codebase set `text-brand-teal` directly on <body> via a Tailwind
+ * class, which caused every paragraph, label, form input, and general UI text
+ * element to inherit a saturated blue-green (#127194). Teal is a brand ACCENT
+ * colour — it should appear on headings, icons, and interactive elements where
+ * it draws the eye. It must not be the default reading colour for body copy.
+ *
+ * The fix is done in two places that reinforce each other:
+ *  1. Here in @layer base (Tailwind's lowest specificity layer), setting the
+ *     global color token.
+ *  2. In layout.blade.php's <style> block (inline stylesheet), which wins over
+ *     Tailwind's utility classes if there is ever a conflict.
+ *
+ * Together they guarantee that <body> is charcoal in every browser, and that
+ * teal can only appear where it is explicitly applied with a utility class.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        /* Base text colour: near-black charcoal — readable for body copy */
+        color: #1f1f1f;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /*
+     * Headings default to a slightly softer charcoal.
+     * Page-level headings that should use teal have text-brand-teal applied
+     * explicitly in the template — this default just prevents any heading
+     * from accidentally inheriting a colour from a poorly-scoped parent.
+     */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: inherit;
+    }
+}
+
+@layer utilities {
+    /* Hide scrollbar visually but keep scroll functionality.
+       Used in Swiper carousel overflow areas. */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}

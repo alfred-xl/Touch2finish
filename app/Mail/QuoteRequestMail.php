@@ -3,18 +3,20 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
-class QuoteRequestMail extends Mailable
+class QuoteRequestMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $quoteData;
+    public array $quoteData;
 
-    public function __construct($quoteData)
+    public function __construct(array $quoteData)
     {
         $this->quoteData = $quoteData;
     }
@@ -22,7 +24,10 @@ class QuoteRequestMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Quote Request: ' . $this->quoteData['service'],
+            replyTo: [
+                new Address($this->quoteData['email'], $this->quoteData['name']),
+            ],
+            subject: '🔔 New Quote Request — ' . $this->quoteData['service'] . ' | Touch2finish',
         );
     }
 
@@ -30,6 +35,14 @@ class QuoteRequestMail extends Mailable
     {
         return new Content(
             markdown: 'emails.quote-request',
+            with: [
+                'quoteData' => $this->quoteData,
+            ],
         );
+    }
+
+    public function attachments(): array
+    {
+        return [];
     }
 }

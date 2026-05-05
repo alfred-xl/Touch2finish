@@ -1,23 +1,39 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ProfileController;
 
-// Landing Page
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+
+// Homepage
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
-// Quote Submission
-Route::post('/quote', [ContactController::class, 'submitQuote'])->name('quote.submit');
+// Dynamic Service Pages — driven by a single template
+Route::get('/services/{slug}', [ContactController::class, 'showService'])
+    ->name('service.show')
+    ->where('slug', '[a-z0-9\-]+');
 
-// Admin / Dashboard
+// Quote form submission
+Route::post('/quote', [ContactController::class, 'submitQuote'])
+    ->name('quote.submit');
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (Breeze — keep for admin access)
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Profile Settings
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
