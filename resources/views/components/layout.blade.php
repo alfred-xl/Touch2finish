@@ -4,64 +4,57 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description"
-        content="Touch2finish — bespoke, high-end trade services in the UK. Removals, Car Valeting, Interior Decor, Real Estate & Cleaning. Standard is everything.">
-    <title>{{ $title ?? 'Touch2finish | Bespoke Trade Services' }}</title>
 
-    <!-- Geist Font -->
+    @isset($seo)
+        {{ $seo }}
+    @else
+        @include('partials.seo', [
+            'title' => $title ?? 'Touch2finish | Premium Trade Services — Standard is Everything',
+            'description' =>
+                'Touch2finish — bespoke, high-end trade services in the UK. Removals, Car Valeting, Interior Decor, Real Estate & Cleaning. Standard is everything.',
+            'canonical' => url()->current(),
+        ])
+    @endisset
+
+    {{-- Fonts: Inter (body) + Sora (display/headings) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@600;700;800;900&display=swap"
         rel="stylesheet">
 
-    <!-- Lucide Icons CDN -->
+    {{-- Lucide Icons — NOT deferred so icons are available before JS bundle --}}
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
-    <!-- Swiper.js CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    {{-- Swiper CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
-    <!-- Fancybox CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    {{-- Fancybox CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
 
+    {{-- Alpine.js — defer is fine, it self-starts after DOMContentLoaded --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {{-- App CSS + JS (Vite) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        /* ─────────────────────────────────────────────────────────────────────
-           FIX 1 · TEXT COLOUR
-           The old <body> carried class="text-brand-teal" which made every
-           paragraph, label, and body copy element inherit teal (#127194) —
-           a saturated blue-green that is too heavy for reading text.
-           Teal is a brand ACCENT. Base prose is now near-black charcoal.
-        ───────────────────────────────────────────────────────────────────── */
-        body {
-            color: #1f1f1f;
-        }
-
-        /* ─────────────────────────────────────────────────────────────────────
-           FIX 2 · FANCYBOX CLOSE BUTTON BLOCKED (the "Projects" lightbox bug)
-
-           ROOT CAUSE:
-           The sticky <header> has Tailwind class z-50 (z-index: 50).
-           A `position: sticky` element with any z-index creates a NEW stacking
-           context. Fancybox 5 appends its overlay as a direct child of <body>,
-           a sibling of <header>. Within the same stacking context (the root),
-           a later sibling normally paints on top — but because the header has
-           an explicit z-index it is promoted above Fancybox's container in
-           Safari and some Chromium builds, covering the close button and the
-           entire top toolbar strip. The user can see the dimmed lightbox but
-           the × close button is hidden behind the header, so they cannot close.
-
-           FIX A: Give Fancybox a z-index higher than the header.
-           Fancybox 5 exposes CSS custom properties for this.
-           We set --f-zindex-backdrop and --f-zindex-toolbar well above z-50.
-
-           FIX B: When Fancybox opens, push the sticky header below by adding
-           a class that sets z-index: 0 (removing it from the stacking race).
-           We restore it on close. This is the belt-and-braces approach that
-           works in every browser without relying on Fancybox internals.
-        ───────────────────────────────────────────────────────────────────── */
+        /* ================================================================
+           GLOBAL CSS CUSTOM PROPERTIES
+           Exposes brand tokens so third-party libs (Fancybox, Swiper)
+           can read them from :root without needing Tailwind compilation.
+        ================================================================ */
         :root {
-            /* Fancybox z-index tokens — must exceed header z-50 = 50 */
+            --t2f-navy: #071B3B;
+            --t2f-teal: #157D9A;
+            --t2f-deep: #0D5876;
+            --t2f-gold: #E2AE49;
+            --t2f-blue: #CBD9DC;
+            --t2f-slate: #485465;
+            --t2f-light: #F4F7F8;
+
+            /* Fancybox z-index — must exceed sticky header z-50 (50).
+               These are Fancybox 5's official CSS custom property API. */
             --f-zindex-backdrop: 9000;
             --f-zindex-toolbar: 9100;
             --f-zindex-caption: 9100;
@@ -71,88 +64,220 @@
             --f-zindex-thumbs: 9100;
             --f-zindex-nav: 9100;
 
-            /* Fancybox brand colours */
-            --f-button-bg: #127194;
-            --f-button-hover-bg: #F6E304;
-            --f-button-color: #fff;
-            --f-button-hover-color: #127194;
+            /* Fancybox button brand colours */
+            --f-button-bg: #071B3B;
+            --f-button-hover-bg: #E2AE49;
+            --f-button-color: #ffffff;
+            --f-button-hover-color: #ffffff;
+            --f-backdrop-color: rgba(7, 27, 59, 0.96);
         }
 
-        /*
-           Belt-and-braces: when Fancybox is active it adds .compensate-for-scrollbar
-           to <html>. We use that signal to drop the header out of the stacking race.
-        */
+        body {
+            color: #485465;
+        }
+
+        /* Drop sticky header below Fancybox when lightbox is active.
+           Fancybox adds .compensate-for-scrollbar to <html> on open. */
         html.compensate-for-scrollbar #site-header,
         html[data-fancybox-open] #site-header {
             z-index: 0 !important;
         }
 
-        /* Swiper custom pagination */
-        .swiper-pagination-bullet-active {
-            background: #127194 !important;
-        }
-
-        .swiper-button-next,
-        .swiper-button-prev {
-            color: #127194 !important;
-        }
-
-        /* Nav animated yellow underline */
+        /* ----------------------------------------------------------------
+           NAVIGATION
+        ---------------------------------------------------------------- */
         .nav-link {
             position: relative;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #485465;
+            transition: color 0.2s ease;
         }
 
         .nav-link::after {
             content: '';
             display: block;
             position: absolute;
-            bottom: -3px;
+            bottom: -4px;
             left: 0;
             width: 0;
             height: 2px;
-            background: #F6E304;
+            background: #E2AE49;
             border-radius: 1px;
-            transition: width 0.28s ease;
+            transition: width 0.25s ease;
+        }
+
+        .nav-link:hover {
+            color: #157D9A;
         }
 
         .nav-link:hover::after {
             width: 100%;
         }
 
-        /* ─────────────────────────────────────────────────────────────────────
-           FIX 3 · SERVICE CARD LAYOUT
+        /* ================================================================
+           BUTTON SYSTEM — single source of truth
+           All button variants live here. Tailwind component aliases are
+           in app.css (@layer components). These raw-CSS rules are the
+           canonical definitions and work even before the Vite build runs.
+        ================================================================ */
 
-           ROOT CAUSE:
-           The old markup used Tailwind opacity utilities
-           (md:opacity-0 / md:group-hover:opacity-100) to swap between the
-           "white resting face" and the "revealed image+text" layers. Two
-           problems:
-           (a) Tailwind JIT compiles md:opacity-100 and md:group-hover:opacity-0
-               at equal specificity, so the transition was unreliable — some
-               browsers kept the white face on top even after hover.
-           (b) The white face div (absolute, z-20, opacity-0) still captured
-               pointer events on mobile, so clicks on "Learn More" links
-               hit the invisible face rather than the actual <a> tag.
+        /* btn-primary — gold, all primary CTAs */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #E2AE49;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 20px -2px rgba(226, 174, 73, 0.32);
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
 
-           FIX: Replace all Tailwind opacity utilities with a set of plain CSS
-           classes. Mobile-first defaults show image+content always. A media
-           query switches to the face-first + hover-reveal pattern on desktop.
-           pointer-events is toggled explicitly so clicks always land correctly.
-        ───────────────────────────────────────────────────────────────────── */
+        .btn-primary:hover {
+            background: #d9a43e;
+            box-shadow: 0 10px 28px -4px rgba(226, 174, 73, 0.48);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:focus-visible {
+            outline: 2px solid #E2AE49;
+            outline-offset: 3px;
+        }
+
+        /* btn-secondary — teal solid, secondary actions */
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #157D9A;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 20px -2px rgba(21, 125, 154, 0.22);
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #0D5876;
+            box-shadow: 0 10px 28px -4px rgba(21, 125, 154, 0.32);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary:focus-visible {
+            outline: 2px solid #157D9A;
+            outline-offset: 3px;
+        }
+
+        /* btn-ghost — transparent + border, for dark/hero backgrounds */
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.10);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s ease, border-color 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.38);
+        }
+
+        .btn-ghost:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.6);
+            outline-offset: 3px;
+        }
+
+        /* btn-nav — compact gold, header navigation CTA */
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #E2AE49;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.875rem;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 3px 14px -2px rgba(226, 174, 73, 0.30);
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+        }
+
+        .btn-nav:hover {
+            background: #d9a43e;
+            box-shadow: 0 6px 20px -3px rgba(226, 174, 73, 0.45);
+            transform: translateY(-1px);
+        }
+
+        /* btn-icon — square icon button (footer socials, etc.) */
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.10);
+            color: #ffffff;
+            transition: background 0.2s ease;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-icon:hover {
+            background: #E2AE49;
+        }
+
+        /* ----------------------------------------------------------------
+           SERVICE CARDS
+        ---------------------------------------------------------------- */
         .service-card {
             position: relative;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             overflow: hidden;
-            box-shadow: 0 4px 20px -2px rgba(18, 113, 148, 0.10);
-            min-height: 280px;
+            box-shadow: 0 4px 20px -2px rgba(21, 125, 154, 0.10);
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            transition: box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
 
         .service-card:hover {
-            box-shadow: 0 12px 32px -4px rgba(18, 113, 148, 0.22);
+            box-shadow: 0 16px 40px -6px rgba(21, 125, 154, 0.24);
+            transform: translateY(-3px);
         }
 
         .service-card__bg {
@@ -161,73 +286,59 @@
             background-size: cover;
             background-position: center;
             z-index: 0;
-            transition: opacity 0.45s ease, transform 0.45s ease;
+            transition: transform 0.5s ease;
+        }
+
+        .service-card:hover .service-card__bg {
+            transform: scale(1.04);
         }
 
         .service-card__overlay {
             position: absolute;
             inset: 0;
             background: linear-gradient(to top,
-                    rgba(18, 113, 148, 0.96) 0%,
-                    rgba(18, 113, 148, 0.72) 55%,
-                    rgba(18, 113, 148, 0.20) 100%);
+                    rgba(7, 27, 59, 0.96) 0%,
+                    rgba(13, 88, 118, 0.72) 50%,
+                    rgba(13, 88, 118, 0.15) 100%);
             z-index: 1;
-            transition: opacity 0.45s ease;
+            transition: opacity 0.4s ease;
         }
 
-        /* Clean white resting face */
         .service-card__face {
             position: absolute;
             inset: 0;
-            background: #fff;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
-            border: 1px solid #f0f0f0;
+            padding: 2rem;
+            border: 1px solid #CBD9DC;
             z-index: 2;
             transition: opacity 0.3s ease;
         }
 
-        /* Revealed text content */
         .service-card__content {
             position: relative;
             z-index: 3;
-            padding: 1.75rem;
+            padding: 2rem;
             width: 100%;
             transition: opacity 0.35s ease;
         }
 
-        /* Mobile defaults: image + content always visible, face hidden */
-        .service-card__bg {
-            opacity: 1;
+        @media (max-width: 767px) {
+            .service-card__face {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .service-card__content {
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
 
-        .service-card__overlay {
-            opacity: 1;
-        }
-
-        .service-card__face {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .service-card__content {
-            opacity: 1;
-        }
-
-        /* Desktop: start with clean white face, reveal on hover */
         @media (min-width: 768px) {
-            .service-card__bg {
-                opacity: 0;
-                transform: scale(1.05);
-            }
-
-            .service-card__overlay {
-                opacity: 0;
-            }
-
             .service-card__face {
                 opacity: 1;
                 pointer-events: auto;
@@ -235,15 +346,7 @@
 
             .service-card__content {
                 opacity: 0;
-            }
-
-            .service-card:hover .service-card__bg {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            .service-card:hover .service-card__overlay {
-                opacity: 1;
+                pointer-events: none;
             }
 
             .service-card:hover .service-card__face {
@@ -253,287 +356,425 @@
 
             .service-card:hover .service-card__content {
                 opacity: 1;
+                pointer-events: auto;
             }
         }
 
-        /* ─────────────────────────────────────────────────────────────────────
-           FIX 4 · MOBILE MENU — handled in markup below (see comments there)
-        ───────────────────────────────────────────────────────────────────── */
+        /* ----------------------------------------------------------------
+           FORM INPUTS
+        ---------------------------------------------------------------- */
+        .t2f-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid #CBD9DC;
+            color: #071B3B;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: #ffffff;
+        }
+
+        .t2f-input:focus {
+            outline: none;
+            border-color: #157D9A;
+            box-shadow: 0 0 0 3px rgba(21, 125, 154, 0.12);
+        }
+
+        .t2f-input.error {
+            border-color: #ef4444;
+        }
+
+        /* ----------------------------------------------------------------
+           BADGES & DIVIDERS
+        ---------------------------------------------------------------- */
+        .gold-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(226, 174, 73, 0.15);
+            border: 1px solid rgba(226, 174, 73, 0.35);
+            color: #E2AE49;
+            padding: 0.375rem 0.875rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .gold-rule {
+            display: block;
+            width: 3.5rem;
+            height: 3px;
+            background: #E2AE49;
+            border-radius: 9px;
+        }
+
+        /* ================================================================
+           GALLERY / SWIPER — PREMIUM STYLED SLIDER
+           Custom arrows (navy→gold on hover), teal bullets, slide cards
+           with polished hover overlay.
+        ================================================================ */
+
+        /* Extra bottom padding for pagination dots */
+        .projects-swiper {
+            padding-bottom: 3.5rem !important;
+        }
+
+        /* Pagination bullets */
+        .projects-swiper .swiper-pagination-bullet {
+            width: 8px;
+            height: 8px;
+            background: #CBD9DC;
+            opacity: 1;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .projects-swiper .swiper-pagination-bullet-active {
+            background: #157D9A !important;
+            transform: scale(1.4);
+        }
+
+        /* Navigation arrows — fully custom brand style */
+        .projects-swiper .swiper-button-next,
+        .projects-swiper .swiper-button-prev {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #071B3B;
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px rgba(7, 27, 59, 0.28);
+            transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            top: calc(50% - 1.75rem);
+            /* adjust for pagination space */
+        }
+
+        .projects-swiper .swiper-button-next:hover,
+        .projects-swiper .swiper-button-prev:hover {
+            background: #E2AE49;
+            box-shadow: 0 6px 22px rgba(226, 174, 73, 0.42);
+            transform: scale(1.10);
+        }
+
+        .projects-swiper .swiper-button-next::after,
+        .projects-swiper .swiper-button-prev::after {
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .projects-swiper .swiper-button-disabled {
+            opacity: 0.3 !important;
+            pointer-events: none;
+        }
+
+        /* Individual gallery slide card */
+        .gallery-slide-card {
+            display: block;
+            text-decoration: none;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 20px -2px rgba(21, 125, 154, 0.12);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .gallery-slide-card:hover {
+            box-shadow: 0 14px 36px -4px rgba(21, 125, 154, 0.26);
+            transform: translateY(-4px);
+        }
+
+        .gallery-slide-card:focus-visible {
+            outline: 2px solid #E2AE49;
+            outline-offset: 3px;
+        }
+
+        .gallery-slide-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-slide-card img {
+                height: 280px;
+            }
+        }
+
+        .gallery-slide-card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Hover caption overlay */
+        .gallery-slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top,
+                    rgba(7, 27, 59, 0.90) 0%,
+                    rgba(7, 27, 59, 0.35) 48%,
+                    transparent 100%);
+            opacity: 0;
+            transition: opacity 0.30s ease;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.25rem;
+            gap: 0.75rem;
+        }
+
+        .gallery-slide-card:hover .gallery-slide-overlay {
+            opacity: 1;
+        }
+
+        /* Always show on mobile (no hover on touch) */
+        @media (max-width: 767px) {
+            .gallery-slide-overlay {
+                opacity: 1;
+            }
+        }
+
+        .gallery-slide-cat {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.10em;
+            text-transform: uppercase;
+            color: #E2AE49;
+            margin-bottom: 0.2rem;
+        }
+
+        .gallery-slide-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .gallery-slide-zoom {
+            width: 2.1rem;
+            height: 2.1rem;
+            border-radius: 50%;
+            background: rgba(226, 174, 73, 0.90);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
     </style>
+
+    @stack('head')
 </head>
 
-{{--
-    FIX 1: body no longer has text-brand-teal.
-    Base colour comes from body { color: #1f1f1f } above.
---}}
+<body class="min-h-screen flex flex-col bg-white antialiased">
 
-<body class="bg-brand-light antialiased font-sans flex flex-col min-h-screen" x-data>
+    {{-- ════════════════════════════════════════════════════════ HEADER ══════ --}}
+    <header id="site-header" class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#CBD9DC]/40"
+        x-data="{ open: false }" @scroll.window="open = false">
 
-    <!-- ═══════════════════════════════════════════════════ HEADER ══════ -->
-    {{--
-        id="site-header" is required for the Fancybox z-index fix.
-        The CSS rule `html.compensate-for-scrollbar #site-header` uses this
-        id to drop the header out of the stacking context while Fancybox is open.
-    --}}
-    <header id="site-header" x-data="{ open: false, scrolled: false }" x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 20 })"
-        :class="scrolled ? 'shadow-soft' : 'shadow-none'"
-        class="sticky top-0 bg-white z-50 transition-shadow duration-300">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
-            {{--
-                FIX: LOGO REVERTED to the original clicking-hand/cursor SVG
-                from the first version of the site, updated to brand-teal palette.
-            --}}
-            <a href="/" class="flex items-center gap-2.5 group flex-shrink-0">
-                <svg class="w-7 h-7 text-brand-teal group-hover:text-brand-yellow transition-colors duration-300"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
-                        d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                </svg>
-                <div class="leading-tight">
-                    <span class="block text-xl font-black tracking-tight text-gray-900">
-                        Touch<span class="text-brand-teal">2</span>finish
-                    </span>
-                    <span class="block text-[9px] font-semibold tracking-widest text-gray-400 uppercase mt-px">
-                        Standard is everything
-                    </span>
-                </div>
+            {{-- Logo --}}
+            <a href="{{ route('home') }}" class="flex items-center gap-3" aria-label="Touch2finish home">
+                {{-- Header logo --}}
+                <img src="{{ asset('images/logo.png') }}" alt="Touch2finish logo" class="h-10 md:h-12 w-auto"
+                    width="300" height="100">
             </a>
 
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-700">
-                <a href="/" class="nav-link hover:text-brand-teal transition-colors">Home</a>
-                <a href="/#about" class="nav-link hover:text-brand-teal transition-colors">About</a>
-                <a href="/#services" class="nav-link hover:text-brand-teal transition-colors">Services</a>
-                <a href="/#gallery" class="nav-link hover:text-brand-teal transition-colors">Projects</a>
-                <a href="/#contact"
-                    class="inline-flex items-center gap-2 bg-brand-yellow text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-yellow-300 transition-all duration-200 shadow-sm hover:shadow-md">
-                    <i data-lucide="file-text" class="w-4 h-4"></i>
+            {{-- Desktop navigation --}}
+            <nav class="hidden md:flex items-center gap-7" aria-label="Primary navigation">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/#about" class="nav-link">About</a>
+                <a href="/#services" class="nav-link">Services</a>
+                <a href="/#gallery-section" class="nav-link">Projects</a>
+                <a href="/#contact" class="btn-nav">
+                    <i data-lucide="file-text" class="w-4 h-4" aria-hidden="true"></i>
                     Get a Quote
                 </a>
             </nav>
 
-            <!-- Mobile hamburger -->
-            <button @click="open = !open"
-                class="md:hidden p-2 rounded-lg text-gray-700 hover:bg-brand-light transition-colors"
-                :aria-expanded="open" aria-label="Toggle navigation">
-                <i x-show="!open" data-lucide="menu" class="w-6 h-6"></i>
-                <i x-show="open" data-lucide="x" class="w-6 h-6" style="display:none"></i>
+            {{-- Mobile hamburger --}}
+            <button
+                class="md:hidden w-10 h-10 rounded-lg flex items-center justify-center text-[#071B3B] hover:bg-[#CBD9DC]/30 transition-colors"
+                @click="open = !open" :aria-expanded="open.toString()" aria-controls="mobile-menu"
+                aria-label="Toggle navigation">
+                <i x-show="!open" data-lucide="menu" class="w-5 h-5" aria-hidden="true"></i>
+                <i x-show="open" data-lucide="x" class="w-5 h-5" aria-hidden="true" style="display:none"></i>
             </button>
         </div>
 
-        {{--
-            ─────────────────────────────────────────────────────────────────
-            FIX 4 · MOBILE MENU BUG — two root causes
-
-            CAUSE A — Tailwind `flex` class fighting Alpine's display control:
-            The old div had class="... flex flex-col ...". Tailwind compiles
-            `flex` → `display: flex` in the stylesheet. Alpine's x-show writes
-            `element.style.display = 'none'` as an inline style (wins). BUT
-            Alpine's x-transition leave animation briefly removes that inline
-            style so the transition can run, and at that moment the Tailwind
-            `flex` class re-applies `display: flex` — the menu flashes back
-            visible for the 150 ms leave duration. Result: looks stuck open.
-
-            FIX A: Remove `flex` and `flex-col` from the static class list.
-            Use :style binding so Alpine alone controls the display property
-            at all times, including during transitions.
-
-            CAUSE B — Same-page anchors not closing the menu:
-            Clicking /#gallery on the same page doesn't trigger navigation,
-            so the page doesn't reload and `open` stays true. If Swiper's
-            touch/scroll handler fires in the same event loop tick it can
-            also prevent Alpine's `open = false` mutation from flushing.
-
-            FIX B: Use @click.prevent on same-page anchors. Set open=false
-            immediately (Alpine re-renders synchronously), then navigate via
-            window.location.hash after 160 ms — after the 150 ms leave
-            transition has fully completed. This prevents Swiper from
-            interfering and guarantees the menu is gone before scrolling starts.
-            ─────────────────────────────────────────────────────────────────
-        --}}
-        <div x-show="open" x-transition:enter="transition ease-out duration-200"
+        {{-- Mobile menu --}}
+        <div id="mobile-menu" x-show="open" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-2"
-            :style="open ? 'display:flex; flex-direction:column;' : 'display:none;'"
-            class="md:hidden border-t border-gray-100 bg-white px-6 py-5 gap-1 text-sm font-semibold text-gray-700"
-            style="display:none;">
+            class="md:hidden border-t border-[#CBD9DC]/40 bg-white px-6 py-5 flex flex-col gap-1" style="display:none">
+
             <a href="/" @click="open = false"
-                class="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-brand-light hover:text-brand-teal transition-colors">
-                <i data-lucide="home" class="w-4 h-4 text-brand-teal flex-shrink-0"></i> Home
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#485465] hover:bg-[#CBD9DC]/20 hover:text-[#157D9A] transition-colors">
+                <i data-lucide="home" class="w-4 h-4 text-[#157D9A]" aria-hidden="true"></i> Home
             </a>
             <a href="/#about" @click="open = false"
-                class="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-brand-light hover:text-brand-teal transition-colors">
-                <i data-lucide="users" class="w-4 h-4 text-brand-teal flex-shrink-0"></i> About Us
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#485465] hover:bg-[#CBD9DC]/20 hover:text-[#157D9A] transition-colors">
+                <i data-lucide="users" class="w-4 h-4 text-[#157D9A]" aria-hidden="true"></i> About Us
             </a>
             <a href="/#services"
                 @click.prevent="open = false; setTimeout(() => { window.location.hash = 'services'; }, 160);"
-                class="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-brand-light hover:text-brand-teal transition-colors">
-                <i data-lucide="briefcase" class="w-4 h-4 text-brand-teal flex-shrink-0"></i> Services
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#485465] hover:bg-[#CBD9DC]/20 hover:text-[#157D9A] transition-colors">
+                <i data-lucide="briefcase" class="w-4 h-4 text-[#157D9A]" aria-hidden="true"></i> Services
             </a>
-            <a href="/#gallery"
+            <a href="/#gallery-section"
                 @click.prevent="open = false; setTimeout(() => { window.location.hash = 'gallery'; }, 160);"
-                class="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-brand-light hover:text-brand-teal transition-colors">
-                <i data-lucide="image" class="w-4 h-4 text-brand-teal flex-shrink-0"></i> Projects
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#485465] hover:bg-[#CBD9DC]/20 hover:text-[#157D9A] transition-colors">
+                <i data-lucide="image" class="w-4 h-4 text-[#157D9A]" aria-hidden="true"></i> Projects
             </a>
+            {{-- Mobile CTA — gold, consistent lift on hover --}}
             <a href="/#contact"
                 @click.prevent="open = false; setTimeout(() => { window.location.hash = 'contact'; }, 160);"
-                class="flex items-center justify-center gap-2 mt-2 bg-brand-yellow text-gray-900 px-6 py-3 rounded-lg font-bold hover:bg-yellow-300 transition-colors">
-                <i data-lucide="file-text" class="w-4 h-4"></i> Get a Quote
+                class="btn-primary flex justify-center mt-3">
+                <i data-lucide="file-text" class="w-4 h-4" aria-hidden="true"></i> Get a Quote
             </a>
         </div>
     </header>
 
-    <!-- ════════════════════════════════════════════ MAIN CONTENT ══════ -->
+    {{-- ════════════════════════════════════════════════════ MAIN CONTENT ══════ --}}
     <main class="flex-grow">
         {{ $slot }}
     </main>
 
-    <!-- ═══════════════════════════════════════════════════ FOOTER ══════ -->
-    <footer class="bg-brand-teal text-white">
+    {{-- ═══════════════════════════════════════════════════════════ FOOTER ══════ --}}
+    <footer class="bg-[#071B3B] text-white" aria-label="Site footer">
         <div class="max-w-7xl mx-auto px-6 pt-16 pb-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 border-b border-white/10 pb-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 pb-12 border-b border-white/10">
 
-                <!-- Brand -->
+                {{-- Brand column --}}
                 <div class="md:col-span-2">
-                    <div class="flex items-center gap-3 mb-5">
-                        <svg class="w-7 h-7 text-brand-yellow" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
-                                d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                        </svg>
-                        <div>
-                            <span class="block text-lg font-black tracking-tight text-white">
-                                Touch<span class="text-brand-yellow">2</span>finish
-                            </span>
-                            <span class="block text-[9px] font-semibold tracking-widest text-white/50 uppercase mt-px">
-                                Standard is everything
-                            </span>
-                        </div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <a href="{{ route('home') }}" class="flex items-center gap-3" aria-label="Touch2finish home">
+                            <img src="{{ asset('images/logo-white.png') }}" alt="Touch2finish logo"
+                                class="h-12 w-auto">
+                        </a>
+
                     </div>
-                    <p class="text-sm leading-relaxed text-white/70 max-w-xs mb-6">
-                        We are here to help — from start to finish. A premium multi-service trade business delivering
-                        the highest standard across every project, every time.
+                    <p class="text-sm leading-relaxed text-white/60 max-w-xs mb-7">
+                        We are here to help from start to finish. A premium multi-service trade business
+                        delivering the highest standard across every project, every time.
                     </p>
+                    {{-- Consistent btn-icon for social links --}}
                     <div class="flex gap-3">
-                        <a href="mailto:info@touch2finish.co.uk"
-                            class="w-9 h-9 rounded-lg bg-white/10 hover:bg-brand-yellow flex items-center justify-center transition-all duration-200 group">
-                            <i data-lucide="mail" class="w-4 h-4 text-white group-hover:text-gray-900"></i>
+                        <a href="mailto:info@touch2finish.co.uk" class="btn-icon" aria-label="Email Touch2finish">
+                            <i data-lucide="mail" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
-                        <a href="tel:+447456490400"
-                            class="w-9 h-9 rounded-lg bg-white/10 hover:bg-brand-yellow flex items-center justify-center transition-all duration-200 group">
-                            <i data-lucide="phone" class="w-4 h-4 text-white group-hover:text-gray-900"></i>
+                        <a href="tel:+447456490400" class="btn-icon" aria-label="Call Touch2finish">
+                            <i data-lucide="phone" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
 
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-sm font-bold tracking-widest uppercase text-white/50 mb-5">Quick Links</h4>
+                {{-- Quick Links --}}
+                <nav aria-label="Footer navigation">
+                    <h2 class="text-xs font-bold tracking-widest uppercase text-white/40 mb-5">Quick Links</h2>
                     <ul class="space-y-3 text-sm">
-                        <li><a href="/"
-                                class="text-white/70 hover:text-brand-yellow transition-colors flex items-center gap-2"><i
-                                    data-lucide="chevron-right" class="w-3 h-3"></i>Home</a></li>
-                        <li><a href="/#about"
-                                class="text-white/70 hover:text-brand-yellow transition-colors flex items-center gap-2"><i
-                                    data-lucide="chevron-right" class="w-3 h-3"></i>About Us</a></li>
-                        <li><a
-                                href="/#services"class="text-white/70 hover:text-brand-yellow transition-colors flex items-center gap-2"><i
-                                    data-lucide="chevron-right" class="w-3 h-3"></i>Our Services</a></li>
-                        <li><a href="/#gallery"
-                                class="text-white/70 hover:text-brand-yellow transition-colors flex items-center gap-2"><i
-                                    data-lucide="chevron-right" class="w-3 h-3"></i>Recent Projects</a></li>
-                        <li><a href="/#contact"
-                                class="text-white/70 hover:text-brand-yellow transition-colors flex items-center gap-2"><i
-                                    data-lucide="chevron-right" class="w-3 h-3"></i>Get a Quote</a></li>
+                        @foreach ([['/', 'Home'], ['/#about', 'About Us'], ['/#services', 'Our Services'], ['/#gallery', 'Recent Projects'], ['/#contact', 'Get a Quote']] as [$href, $label])
+                            <li>
+                                <a href="{{ $href }}"
+                                    class="text-white/60 hover:text-[#E2AE49] transition-colors flex items-center gap-2">
+                                    <i data-lucide="chevron-right" class="w-3 h-3" aria-hidden="true"></i>
+                                    {{ $label }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
-                </div>
+                </nav>
 
-                <!-- Contact -->
+                {{-- Contact --}}
                 <div>
-                    <h4 class="text-sm font-bold tracking-widest uppercase text-white/50 mb-5">Get In Touch</h4>
+                    <h2 class="text-xs font-bold tracking-widest uppercase text-white/40 mb-5">Get In Touch</h2>
                     <ul class="space-y-4 text-sm">
                         <li class="flex items-start gap-3">
-                            <i data-lucide="mail" class="w-4 h-4 text-brand-yellow mt-0.5 flex-shrink-0"></i>
+                            <i data-lucide="mail" class="w-4 h-4 text-[#E2AE49] mt-0.5 flex-shrink-0"
+                                aria-hidden="true"></i>
                             <a href="mailto:info@touch2finish.co.uk"
-                                class="text-white/70 hover:text-brand-yellow transition-colors break-all">info@touch2finish.co.uk</a>
+                                class="text-white/60 hover:text-[#E2AE49] transition-colors break-all">
+                                info@touch2finish.co.uk
+                            </a>
                         </li>
                         <li class="flex items-center gap-3">
-                            <i data-lucide="phone" class="w-4 h-4 text-brand-yellow flex-shrink-0"></i>
-                            <a href="tel:+447456490400"
-                                class="text-white/70 hover:text-brand-yellow transition-colors">+44 7456 490 400</a>
+                            <i data-lucide="phone" class="w-4 h-4 text-[#E2AE49] flex-shrink-0"
+                                aria-hidden="true"></i>
+                            <a href="tel:+447456490400" class="text-white/60 hover:text-[#E2AE49] transition-colors">
+                                +44 7456 490 400
+                            </a>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-brand-yellow mt-0.5 flex-shrink-0"></i>
-                            <span class="text-white/70">United Kingdom</span>
+                            <i data-lucide="map-pin" class="w-4 h-4 text-[#E2AE49] mt-0.5 flex-shrink-0"
+                                aria-hidden="true"></i>
+                            <span class="text-white/60">United Kingdom</span>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/30">
                 <p>&copy; {{ date('Y') }} Touch2finish. All rights reserved.</p>
                 <div class="flex gap-6">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-white/70 transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white/70 transition-colors">Terms of Service</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
+
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 
     <script>
-        lucide.createIcons();
+        // ── Lucide icons ──────────────────────────────────────────────────
+        // lucide.min.js was loaded synchronously in <head>, always available.
+        if (window.lucide) lucide.createIcons();
+        (function initFancybox() {
+            if (!window.Fancybox) {
+                console.warn('Touch2finish: Fancybox did not load.');
+                return;
+            }
 
-        // ─────────────────────────────────────────────────────────────────
-        // FIX 2 · FANCYBOX CLOSE BUTTON — belt-and-braces JS approach
-        //
-        // The CSS :root variables above already push Fancybox z-indexes to
-        // 9000+. This JS listener adds a second safety net: when Fancybox
-        // opens it dispatches a custom event. We set the header to z-index:0
-        // on open and restore it on close, removing it from the stacking
-        // context entirely while the lightbox is active.
-        // ─────────────────────────────────────────────────────────────────
-        const siteHeader = document.getElementById('site-header');
+            var siteHeader = document.getElementById('site-header');
 
-        Fancybox.bind("[data-fancybox]", {
-            // Push the header below Fancybox on open
-            on: {
-                init: () => {
-                    if (siteHeader) siteHeader.style.zIndex = '0';
+            Fancybox.bind('[data-fancybox]', {
+                on: {
+                    'init': function() {
+                        if (siteHeader) siteHeader.style.zIndex = '0';
+                    },
+                    'destroy': function() {
+                        if (siteHeader) siteHeader.style.zIndex = '';
+                    },
                 },
-                destroy: () => {
-                    // Restore header z-index when lightbox is fully closed
-                    if (siteHeader) siteHeader.style.zIndex = '';
+                Toolbar: {
+                    display: {
+                        left: ['infobar'],
+                        middle: [],
+                        right: ['zoomIn', 'zoomOut', 'toggle1to1', 'slideshow', 'thumbs', 'close'],
+                    },
                 },
-            },
-            Toolbar: {
-                display: {
-                    left: ["infobar"],
-                    middle: [],
-                    right: ["zoomIn", "zoomOut", "toggle1to1", "rotateCCW", "rotateCW",
-                        "flipX", "flipY", "slideshow", "thumbs", "close"
-                    ],
+                keyboard: {
+                    Escape: 'close'
                 },
-            },
-            Images: {
-                zoom: true
-            },
-            Thumbs: {
-                type: "classic"
-            },
-            // Keyboard Escape key should always close
-            keyboard: {
-                Escape: "close"
-            },
-        });
+                backdropClick: 'close',
+                Images: {
+                    zoom: true
+                },
+                Thumbs: {
+                    type: 'classic'
+                },
+                animated: true,
+                showClass: 'f-fadeIn',
+                hideClass: 'f-fadeOut',
+            });
+        })();
     </script>
 
-    {{-- Page-specific scripts (Swiper init from welcome.blade.php) --}}
     @stack('scripts')
 </body>
 

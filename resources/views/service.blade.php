@@ -1,19 +1,65 @@
 <x-layout>
-    <x-slot name="title">{{ $service['title'] }} | Touch2finish</x-slot>
 
-    {{-- ═══════════════════════════════════════════════════════ HERO ══════ --}}
-    <section class="relative min-h-[50vh] flex items-end bg-brand-teal overflow-hidden">
+    <x-slot name="seo">
+        @php
+            // FIX: Ensure $service['image'] is always an absolute URL for JSON-LD.
+            // asset() images are already absolute. Unsplash URLs are also absolute.
+            // This guard handles any edge case where a bare path slips through.
+            $absoluteImage = Str::startsWith($service['image'], ['http://', 'https://'])
+                ? $service['image']
+                : asset($service['image']);
 
-        {{-- Background image --}}
+            $serviceSchema = [
+                '@context' => 'https://schema.org',
+                '@type' => 'Service',
+                'name' => $service['title'],
+                'description' => Str::limit(strip_tags($service['writeup']), 200),
+                'provider' => [
+                    '@type' => 'LocalBusiness',
+                    '@id' => url('/') . '#business',
+                    'name' => 'Touch2finish',
+                    'url' => url('/'),
+                    'telephone' => '+44-7456-490400',
+                    'email' => 'info@touch2finish.co.uk',
+                    'areaServed' => 'United Kingdom',
+                ],
+                'url' => url()->current(),
+                'image' => $absoluteImage, // FIX: always absolute
+                'areaServed' => ['@type' => 'Country', 'name' => 'United Kingdom'],
+                'offers' => [
+                    '@type' => 'Offer',
+                    'availability' => 'https://schema.org/InStock',
+                    'priceCurrency' => 'GBP',
+                    'url' => url('/#contact'),
+                ],
+            ];
+        @endphp
+        @include('partials.seo', [
+            'title' => $service['title'] . ' | Touch2finish',
+            'description' =>
+                'Touch2finish provides premium ' .
+                strtolower($service['title']) .
+                ' services across the UK. ' .
+                Str::limit(strip_tags($service['writeup']), 120) .
+                ' Get a free quote today.',
+            'canonical' => url()->current(),
+            'ogImage' => $absoluteImage, // FIX: always absolute
+            'schema' => $serviceSchema,
+        ])
+    </x-slot>
+
+    {{-- ═══════════════════════════════════════════════════════════ HERO ══════ --}}
+    <section class="relative min-h-[52vh] flex items-end bg-[#071B3B] overflow-hidden">
+
         <div class="absolute inset-0 z-0">
-            <img src="{{ $service['image'] }}" alt="{{ $service['title'] }}" class="w-full h-full object-cover">
+            <img src="{{ $absoluteImage }}" alt="{{ $service['title'] }} — professional service by Touch2finish"
+                class="w-full h-full object-cover" loading="eager" fetchpriority="high">
         </div>
 
-        {{-- Gradient overlay --}}
-        <div class="absolute inset-0 z-10 bg-gradient-to-t from-brand-teal via-brand-teal/70 to-brand-teal/20"></div>
+        <div class="absolute inset-0 z-10 bg-gradient-to-t from-[#071B3B] via-[#071B3B]/75 to-[#071B3B]/20"
+            aria-hidden="true"></div>
 
-        {{-- Dot pattern --}}
-        <div class="absolute inset-0 z-5 opacity-10 pointer-events-none">
+        <div class="absolute inset-0 z-[5] opacity-[0.06] pointer-events-none" aria-hidden="true">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse">
@@ -25,71 +71,52 @@
         </div>
 
         <div class="relative z-20 max-w-7xl mx-auto px-6 py-16 w-full">
-
-            {{-- Breadcrumb --}}
-            <nav class="flex items-center gap-2 text-white/50 text-xs font-medium mb-6">
-                <a href="/" class="hover:text-brand-yellow transition-colors">Home</a>
-                <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                <a href="/#services" class="hover:text-brand-yellow transition-colors">Services</a>
-                <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                <span class="text-white/80">{{ $service['title'] }}</span>
+            <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-white/45 text-xs font-medium mb-6">
+                <a href="/" class="hover:text-[#E2AE49] transition-colors">Home</a>
+                <i data-lucide="chevron-right" class="w-3 h-3" aria-hidden="true"></i>
+                <a href="/#services" class="hover:text-[#E2AE49] transition-colors">Services</a>
+                <i data-lucide="chevron-right" class="w-3 h-3" aria-hidden="true"></i>
+                <span class="text-white/75" aria-current="page">{{ $service['title'] }}</span>
             </nav>
-
-            {{-- Icon badge + heading --}}
-            <div
-                class="inline-flex items-center gap-2 bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase mb-5">
-                <i data-lucide="{{ $service['icon'] }}" class="w-3.5 h-3.5"></i>
+            <div class="gold-badge mb-5">
+                <i data-lucide="{{ $service['icon'] }}" class="w-3.5 h-3.5" aria-hidden="true"></i>
                 Premium Service
             </div>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight text-balance">
                 {{ $service['title'] }}
             </h1>
         </div>
     </section>
 
-    {{-- ═══════════════════════════════════════ TWO-COLUMN CONTENT ══════ --}}
+    {{-- ═════════════════════════════════════════════ TWO-COLUMN CONTENT ══════ --}}
     <section class="py-20 px-6 bg-white">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
 
-                {{-- ── Left: write-up + process (2 cols) ── --}}
                 <div class="lg:col-span-2">
-
-                    <span
-                        class="inline-block text-brand-yellow font-bold tracking-widest uppercase text-xs mb-3 bg-brand-teal/10 px-3 py-1 rounded-full">
-                        About This Service
-                    </span>
-
-                    {{-- Heading: teal is intentional brand accent on white bg --}}
-                    <h2 class="text-2xl md:text-3xl font-black text-brand-teal mb-6 leading-tight">
+                    <span class="eyebrow">About This Service</span>
+                    <h2 class="section-heading mt-2 mb-6">
                         The Touch2finish Approach<br>
                         to {{ Str::before($service['title'], ' &') ?: $service['title'] }}
                     </h2>
-
-                    {{-- Body prose: charcoal, not teal --}}
-                    <div class="text-gray-600 text-base leading-relaxed space-y-5">
+                    <div class="text-[#485465] text-base leading-relaxed space-y-5">
                         {!! nl2br(e($service['writeup'])) !!}
                     </div>
 
-                    {{-- Process steps --}}
                     <div class="mt-12">
-                        {{-- Step heading: teal accent --}}
-                        <h3 class="text-xl font-black text-brand-teal mb-6">Our Process</h3>
-
+                        <h3 class="text-xl font-black text-[#071B3B] mb-6">Our Process</h3>
                         <div class="space-y-3">
                             @foreach ([['step' => '01', 'title' => 'Initial Consultation', 'desc' => 'We begin with a thorough understanding of your requirements, timeline, and expectations.'], ['step' => '02', 'title' => 'Tailored Quotation', 'desc' => 'You receive a detailed, transparent, no-obligation quote with no hidden costs.'], ['step' => '03', 'title' => 'Expert Execution', 'desc' => 'Our skilled team gets to work, keeping you informed at every stage of the project.'], ['step' => '04', 'title' => 'Quality Sign-Off', 'desc' => 'We complete a thorough quality check and only sign off once you are fully satisfied.']] as $step)
                                 <div
-                                    class="flex items-start gap-5 p-5 rounded-xl hover:bg-brand-light transition-colors duration-200">
-                                    {{-- Step number bubble: teal bg/border as brand accent --}}
-                                    <div
-                                        class="w-12 h-12 rounded-xl bg-brand-teal/5 border border-brand-teal/10 flex items-center justify-center flex-shrink-0">
-                                        <span class="text-brand-teal font-black text-sm">{{ $step['step'] }}</span>
+                                    class="flex items-start gap-5 p-5 rounded-2xl hover:bg-[#F4F7F8] transition-colors duration-200 border border-transparent hover:border-[#CBD9DC]/40">
+                                    <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        style="background:rgba(21,125,154,0.07);border:1px solid rgba(21,125,154,0.15)">
+                                        <span class="text-[#157D9A] font-black text-sm">{{ $step['step'] }}</span>
                                     </div>
                                     <div>
-                                        {{-- Step title: dark charcoal --}}
-                                        <p class="font-bold text-gray-800 text-sm">{{ $step['title'] }}</p>
-                                        {{-- Step desc: mid charcoal --}}
-                                        <p class="text-gray-500 text-sm mt-0.5 leading-relaxed">{{ $step['desc'] }}</p>
+                                        <p class="font-bold text-[#071B3B] text-sm">{{ $step['title'] }}</p>
+                                        <p class="text-[#485465]/70 text-sm mt-0.5 leading-relaxed">{{ $step['desc'] }}
+                                        </p>
                                     </div>
                                 </div>
                             @endforeach
@@ -97,18 +124,18 @@
                     </div>
                 </div>
 
-                {{-- ── Right: sticky sidebar (1 col) ── --}}
                 <div class="lg:col-span-1">
                     <div class="lg:sticky lg:top-28 space-y-5">
-
-                        {{-- Key Benefits card — teal background, white text: no changes needed here --}}
-                        <div class="bg-brand-teal rounded-2xl p-7 shadow-soft-lg text-white">
+                        <div class="bg-[#071B3B] rounded-2xl p-7 text-white"
+                            style="box-shadow:0 20px 48px -8px rgba(7,27,59,0.35)">
                             <div class="flex items-center gap-3 mb-6">
-                                <div class="w-10 h-10 rounded-xl bg-brand-yellow/20 flex items-center justify-center">
-                                    <i data-lucide="{{ $service['icon'] }}" class="w-5 h-5 text-brand-yellow"></i>
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                    style="background:rgba(226,174,73,0.20)">
+                                    <i data-lucide="{{ $service['icon'] }}" class="w-5 h-5 text-[#E2AE49]"
+                                        aria-hidden="true"></i>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-bold tracking-widest uppercase text-white/50">Why Choose
+                                    <p class="text-[10px] font-bold tracking-widest uppercase text-white/40">Why Choose
                                         Us</p>
                                     <h3 class="font-black text-sm text-white">Key Benefits</h3>
                                 </div>
@@ -117,112 +144,72 @@
                                 @foreach ($service['benefits'] as $benefit)
                                     <li class="flex items-start gap-3">
                                         <div
-                                            class="w-6 h-6 rounded-full bg-brand-yellow flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <i data-lucide="check" class="w-3.5 h-3.5 text-gray-900"></i>
+                                            class="w-6 h-6 rounded-full bg-[#E2AE49] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i data-lucide="check" class="w-3.5 h-3.5 text-white"
+                                                aria-hidden="true"></i>
                                         </div>
-                                        <span class="text-sm text-white/85 leading-relaxed">{{ $benefit }}</span>
+                                        <span class="text-sm text-white/75 leading-relaxed">{{ $benefit }}</span>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
 
-                        {{-- Quick Quote card --}}
-                        <div class="bg-brand-light rounded-2xl p-6 border border-gray-100">
-                            {{-- Label: charcoal, not teal --}}
-                            <p class="font-black text-gray-900 text-sm mb-1">Ready to get started?</p>
-                            <p class="text-gray-500 text-xs mb-4">Get a free, no-obligation quote tailored to your
-                                project.</p>
-                            <a href="/#contact"
-                                class="w-full inline-flex items-center justify-center gap-2 bg-brand-yellow text-gray-900 font-bold py-3 rounded-xl hover:bg-yellow-300 transition-all duration-200 text-sm">
-                                <i data-lucide="file-text" class="w-4 h-4"></i>
-                                Request a Quote
+                        <div class="bg-[#F4F7F8] rounded-2xl p-6 border border-[#CBD9DC]/40">
+                            <p class="font-black text-[#071B3B] text-sm mb-1">Ready to get started?</p>
+                            <p class="text-[#485465]/60 text-xs mb-4">Get a free, no-obligation quote for your project
+                                today.</p>
+                            <a href="/#contact" class="btn-primary w-full justify-center text-sm py-3">
+                                <i data-lucide="file-text" class="w-4 h-4" aria-hidden="true"></i>
+                                Get a Free Quote
                             </a>
-                            <div class="flex items-center gap-2 mt-4 text-xs text-gray-400">
-                                <i data-lucide="clock" class="w-3 h-3 text-gray-300"></i>
-                                Response within 24 hours
+                            <div class="mt-4 pt-4 border-t border-[#CBD9DC]/40 space-y-3">
+                                <a href="tel:+447456490400"
+                                    class="flex items-center gap-3 text-sm text-[#485465] hover:text-[#157D9A] transition-colors">
+                                    <i data-lucide="phone" class="w-4 h-4 text-[#157D9A] flex-shrink-0"
+                                        aria-hidden="true"></i>
+                                    +44 7456 490 400
+                                </a>
+                                <a href="mailto:info@touch2finish.co.uk"
+                                    class="flex items-center gap-3 text-sm text-[#485465] hover:text-[#157D9A] transition-colors">
+                                    <i data-lucide="mail" class="w-4 h-4 text-[#157D9A] flex-shrink-0"
+                                        aria-hidden="true"></i>
+                                    info@touch2finish.co.uk
+                                </a>
                             </div>
                         </div>
 
-                        {{-- Call card --}}
-                        <div class="bg-white rounded-2xl p-5 shadow-soft border border-gray-100">
-                            <p class="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-3">Talk to a
-                                Specialist</p>
-                            <a href="tel:+447456490400" class="flex items-center gap-3 group">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-brand-teal/5 flex items-center justify-center group-hover:bg-brand-yellow transition-colors duration-200">
-                                    <i data-lucide="phone" class="w-4 h-4 text-brand-teal"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-900 text-sm">+44 7456 490 400</p>
-                                    <p class="text-gray-400 text-xs">Available Mon–Sat, 8am–7pm</p>
-                                </div>
-                            </a>
-                        </div>
-
+                        <a href="/#services"
+                            class="flex items-center justify-center gap-2 text-sm font-semibold text-[#485465]/60 hover:text-[#157D9A] transition-colors py-2">
+                            <i data-lucide="arrow-left" class="w-4 h-4" aria-hidden="true"></i>
+                            View All Services
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- ═══════════════════════════════════════ YELLOW CTA BANNER ══════ --}}
-    <section class="bg-brand-yellow py-16 px-6">
+    {{-- ═════════════════════════════════════════════════════════ CTA BAND ══════ --}}
+    <section class="bg-[#157D9A] py-16 px-6" aria-labelledby="service-cta-heading">
         <div class="max-w-4xl mx-auto text-center">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-teal/10 mb-6">
-                <i data-lucide="{{ $service['icon'] }}" class="w-8 h-8 text-brand-teal"></i>
-            </div>
-            {{-- On yellow bg, teal heading is correct brand usage --}}
-            <h2 class="text-3xl md:text-4xl font-black text-brand-teal mb-4">
-                Ready for the <span class="underline decoration-brand-teal/30 decoration-4">highest standard?</span>
+            <h2 id="service-cta-heading" class="text-2xl md:text-3xl font-black text-white mb-4 text-balance">
+                Ready for a premium {{ strtolower($service['title']) }} experience?
             </h2>
-            {{-- Body on yellow: dark charcoal reads better than teal/70 --}}
-            <p class="text-gray-700 text-base mb-8 max-w-lg mx-auto leading-relaxed">
-                Get in touch today for your free, no-obligation quote on {{ $service['title'] }}.
-                Our team responds within 24 hours.
+            <p class="text-white/70 mb-8 max-w-xl mx-auto">
+                Get your free, no-obligation quote within 24 hours. Standard is everything — and that starts from your
+                very first enquiry.
             </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="/#contact"
-                    class="inline-flex items-center gap-2 bg-brand-teal text-white font-bold px-8 py-4 rounded-xl hover:bg-brand-teal/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-base">
-                    <i data-lucide="file-text" class="w-5 h-5"></i>
-                    Get a Free Quote
-                </a>
-                <a href="tel:+447456490400"
-                    class="inline-flex items-center gap-2 bg-white/60 text-gray-900 font-bold px-8 py-4 rounded-xl hover:bg-white transition-all duration-200 text-base">
-                    <i data-lucide="phone" class="w-5 h-5"></i>
-                    Call Us Now
-                </a>
-            </div>
+            <a href="/#contact" class="btn-primary text-base px-10 py-4">
+                <i data-lucide="file-text" class="w-5 h-5" aria-hidden="true"></i>
+                Get Your Free Quote
+            </a>
         </div>
     </section>
 
-    {{-- ══════════════════════════════════ OTHER SERVICES STRIP ══════ --}}
-    <section class="py-16 px-6 bg-brand-light">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-10">
-                {{-- Section heading: teal accent on light bg --}}
-                <h3 class="text-xl font-black text-brand-teal">Explore Our Other Services</h3>
-            </div>
-            <div class="flex flex-wrap justify-center gap-3">
-                @php
-                    $allServices = [
-                        ['slug' => 'removals-handyman', 'title' => 'Removals & HandyMan', 'icon' => 'truck'],
-                        ['slug' => 'car-valeting', 'title' => 'Car Valeting & Wash', 'icon' => 'car'],
-                        ['slug' => 'interior-decor', 'title' => 'Interior Decor & Refurb', 'icon' => 'paint-roller'],
-                        ['slug' => 'real-estate', 'title' => 'Real Estate Development', 'icon' => 'building-2'],
-                        ['slug' => 'cleaning', 'title' => 'Cleaning Services', 'icon' => 'sparkles'],
-                    ];
-                @endphp
-                @foreach ($allServices as $s)
-                    @if ($s['slug'] !== $service['slug'])
-                        <a href="/services/{{ $s['slug'] }}"
-                            class="inline-flex items-center gap-2 bg-white text-gray-700 text-sm font-semibold px-5 py-2.5 rounded-xl shadow-soft hover:shadow-soft-hover hover:bg-brand-teal hover:text-white transition-all duration-200">
-                            <i data-lucide="{{ $s['icon'] }}" class="w-4 h-4"></i>
-                            {{ $s['title'] }}
-                        </a>
-                    @endif
-                @endforeach
-            </div>
-        </div>
-    </section>
+    @push('scripts')
+        <script>
+            if (window.lucide) lucide.createIcons();
+        </script>
+    @endpush
 
 </x-layout>

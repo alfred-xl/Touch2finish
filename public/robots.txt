@@ -1,2 +1,26 @@
+# robots.txt — Touch2finish
+# Served at: https://touch2finish.co.uk/robots.txt
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Block Laravel auth routes
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /confirm-password
+
+# Block quote POST endpoint (not a page)
+Disallow: /quote
+
+# Block debug/admin tools
+Disallow: /telescope
+Disallow: /horizon
+Disallow: /_debugbar
+
+# Sitemap
+Sitemap: https://touch2finish.co.uk/sitemap.xml
