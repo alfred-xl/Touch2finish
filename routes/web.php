@@ -30,6 +30,7 @@ Route::get('/services/{slug}', [ContactController::class, 'showService'])
 
 // Quote form submission
 Route::post('/quote', [ContactController::class, 'submitQuote'])
+    ->middleware('throttle:5,1')
     ->name('quote.submit');
 
 // XML Sitemap

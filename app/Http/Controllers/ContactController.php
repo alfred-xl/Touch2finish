@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\QuoteRequestMail;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\View\View;
 
 class ContactController extends Controller
 {
@@ -15,27 +17,41 @@ class ContactController extends Controller
     public function submitQuote(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name'    => ['required', 'string', 'max:255'],
-            'email'   => ['required', 'email', 'max:255'],
-            'phone'   => ['required', 'string', 'max:30'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email:rfc,dns', 'max:255'],
+            'phone' => ['required', 'string', 'max:30'],
             'service' => ['required', 'string', 'max:100'],
             'message' => ['required', 'string', 'min:10', 'max:3000'],
         ], [
-            'name.required'    => 'Please enter your full name.',
-            'email.required'   => 'Please enter a valid email address.',
-            'email.email'      => 'The email address you entered is not valid.',
-            'phone.required'   => 'Please enter your phone number.',
+            'name.required' => 'Please enter your full name.',
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'Please enter a valid email address.',
+            'phone.required' => 'Please enter your phone number.',
             'service.required' => 'Please select the service you require.',
             'message.required' => 'Please provide some details about your project.',
-            'message.min'      => 'Please give us a bit more detail about your project (at least 10 characters).',
+            'message.min' => 'Please give us a bit more detail about your project.',
         ]);
 
-        Mail::to('info@touch2finish.co.uk')->send(new QuoteRequestMail($validated));
+        try {
+            $receiverEmail = config('mail.contact_receiver', config('mail.from.address'));
 
-        return redirect('/#contact')->with(
-            'success',
-            'Thank you, ' . $validated['name'] . '! Your quote request has been sent. We\'ll be in touch within 24 hours.'
-        );
+            Mail::to($receiverEmail)->send(new QuoteRequestMail($validated));
+
+            return redirect('/#contact')->with(
+                'success',
+                'Thank you, ' . $validated['name'] . '! Your quote request has been sent. We will be in touch shortly.'
+            );
+        } catch (\Throwable $e) {
+            Log::error('Quote request email failed', [
+                'error' => $e->getMessage(),
+                'customer_email' => $validated['email'] ?? null,
+                'service' => $validated['service'] ?? null,
+            ]);
+
+            return redirect('/#contact')
+                ->withInput()
+                ->with('error', 'Sorry, your message could not be sent right now. Please try again or contact us directly.');
+        }
     }
 
     /**
@@ -51,18 +67,10 @@ class ContactController extends Controller
 
         return view('service', [
             'service' => $services[$slug],
+            'slug' => $slug,
         ]);
     }
 
-    /**
-     * All service data — single source of truth for dynamic pages.
-     *
-     * FIX — image paths:
-     *   All images use asset() to generate absolute URLs. This ensures:
-     *   1. Background-image CSS in welcome.blade.php works from any URL depth.
-     *   2. JSON-LD schema image URLs are always absolute (required by Google).
-     *   3. og:image tags contain valid absolute URLs for social sharing.
-     */
     private function getServicesData(): array
     {
         return [

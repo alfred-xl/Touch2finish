@@ -77,7 +77,7 @@
                 <div>
                     <div class="gold-badge mb-8">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#E2AE49] animate-pulse" aria-hidden="true"></span>
-                        UK's Premium Trade Services
+                        Premium Trade Services
                     </div>
                     <h1
                         class="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-[1.08] mb-6 tracking-tight text-balance">
@@ -173,9 +173,9 @@
                         the absolute highest standard.
                     </p>
                     <p class="text-[#485465] leading-relaxed mb-8 text-base">
-                        Whether you need a single room refreshed, a full property refurbishment, your vehicle
-                        detailed to a showroom finish, or complex real estate development managed end-to-end
-                        we bring the same relentless commitment to quality to every single job.
+                        Whether you need a single room refreshed, a full property refurbished, your vehicle detailed to
+                        a showroom finish, or a complex real estate development managed from start to finish, we bring
+                        the same relentless commitment to quality to every job.
                     </p>
                     <div class="grid grid-cols-2 gap-4 mb-8">
                         @foreach ([['icon' => 'check-circle', 'text' => 'Bespoke service plans'], ['icon' => 'check-circle', 'text' => 'No hidden costs'], ['icon' => 'check-circle', 'text' => 'Experienced tradespeople'], ['icon' => 'check-circle', 'text' => 'Fully vetted & insured']] as $point)
@@ -299,10 +299,7 @@
                     <span class="eyebrow">Our Work</span>
                     <h2 class="section-heading mt-2">Recent Projects</h2>
                 </div>
-                <p class="text-[#485465]/60 text-sm max-w-xs md:text-right">
-                    Click any image to view full-screen. Press <kbd
-                        class="text-xs bg-[#F4F7F8] px-1.5 py-0.5 rounded border border-[#CBD9DC]">Esc</kbd> to close.
-                </p>
+
             </div>
             <span class="gold-rule mt-4" aria-hidden="true"></span>
         </div>
