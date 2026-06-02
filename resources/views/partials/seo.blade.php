@@ -7,7 +7,7 @@
         ? trim((string) $description)
         : 'Touch2finish provides premium removals, handyman, car valeting, interior decor, refurbishment, real estate development, and cleaning services across the UK.';
     $canonical = isset($canonical) ? trim((string) $canonical) : url()->current();
-    $ogImage = isset($ogImage) ? trim((string) $ogImage) : asset('images/og-default.jpg');
+    $ogImage = isset($ogImage) ? trim((string) $ogImage) : asset('images/og-default.jpeg');
     $robots = isset($robots) ? trim((string) $robots) : 'index, follow';
 
     $schemaJson = null;

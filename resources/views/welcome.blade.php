@@ -15,10 +15,10 @@
                     '@type' => 'ImageObject',
                     'url' => asset('images/logo.png'),
                 ],
-                'image' => asset('images/og-default.jpg'),
+                'image' => asset('images/og-default.jpeg'),
                 'telephone' => '+44-7456-490400',
                 'email' => 'info@touch2finish.co.uk',
-                'priceRange' => '££',
+                'priceRange' => '£',
                 'currenciesAccepted' => 'GBP',
                 'areaServed' => 'United Kingdom',
                 'address' => [
@@ -42,7 +42,7 @@
             'description' =>
                 'Touch2finish delivers bespoke, high-standard trade services across the UK — removals, car valeting, interior decor, real estate development & cleaning. Get a free quote today.',
             'canonical' => url('/'),
-            'ogImage' => asset('images/og-default.jpg'),
+            'ogImage' => asset('images/og-default.jpeg'),
             'schema' => $homeSchema,
         ])
     </x-slot>
