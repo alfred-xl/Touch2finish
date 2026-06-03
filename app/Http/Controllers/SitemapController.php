@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\URL;
 
 class SitemapController extends Controller
 {
@@ -17,11 +18,14 @@ class SitemapController extends Controller
             'cleaning',
         ];
 
+
+        $baseUrl = rtrim(config('app.url'), '/');
+
         $urls = [];
 
         // Homepage
         $urls[] = [
-            'loc'        => url('/'),
+            'loc'        => $baseUrl . '/',
             'lastmod'    => now()->toDateString(),
             'changefreq' => 'weekly',
             'priority'   => '1.0',
@@ -30,7 +34,7 @@ class SitemapController extends Controller
         // Service pages
         foreach ($serviceSlugs as $slug) {
             $urls[] = [
-                'loc'        => route('service.show', $slug),
+                'loc'        => $baseUrl . '/services/' . $slug,
                 'lastmod'    => now()->toDateString(),
                 'changefreq' => 'monthly',
                 'priority'   => '0.8',
@@ -40,8 +44,11 @@ class SitemapController extends Controller
         $xml = view('sitemap', compact('urls'))->render();
 
         return response($xml, 200, [
-            'Content-Type'  => 'application/xml; charset=utf-8',
-            'Cache-Control' => 'public, max-age=86400', // Cache for 24 hours
+            // Google requires this exact content-type for XML sitemaps.
+            'Content-Type'  => 'application/xml; charset=UTF-8',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma'        => 'no-cache',
+            'Expires'       => '0',
         ]);
     }
 }
