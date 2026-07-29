@@ -1,0 +1,1 @@
+@props(['name','label','placeholder'=>''])<div class="sm:col-span-2"><label for="{{ $name }}" class="form-label">{{ $label }}</label><textarea id="{{ $name }}" name="{{ $name }}" rows="4" placeholder="{{ $placeholder }}" class="t2f-input resize-y @error($name) error @enderror">{{ old($name) }}</textarea>@error($name)<p class="form-error">{{ $message }}</p>@enderror</div>

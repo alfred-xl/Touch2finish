@@ -1,44 +1,30 @@
 <?php
-// ──────────────────────────────────────────────────────────────────────────────
-// FILE: routes/web.php  (replace existing file with this content)
-//
-// Changes from original:
-//  - Added /sitemap.xml route → SitemapController@index
-//  - All other routes unchanged
-// ──────────────────────────────────────────────────────────────────────────────
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuoteRequestController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
+use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
+Route::view('/', 'welcome')->name('home');
+Route::view('/areas-we-cover', 'areas-we-cover')->name('areas');
+Route::view('/privacy-policy', 'legal.privacy-policy')->name('legal.privacy');
+Route::view('/cookie-policy', 'legal.cookie-policy')->name('legal.cookies');
+Route::view('/terms-and-conditions', 'legal.terms-and-conditions')->name('legal.terms');
 
-// Homepage
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 
-// Dynamic Service Pages
-Route::get('/services/{slug}', [ContactController::class, 'showService'])
-    ->name('service.show')
+foreach (config('touch2finish.redirects', []) as $oldSlug => $newSlug) {
+    Route::permanentRedirect(
+        '/services/' . $oldSlug,
+        $newSlug ? '/services/' . $newSlug : '/services'
+    );
+}
+Route::get('/services/{slug}', [ServiceController::class, 'show'])
+    ->name('services.show')
     ->where('slug', '[a-z0-9\-]+');
 
-// Quote form submission
-Route::post('/quote', [ContactController::class, 'submitQuote'])
+Route::post('/quote', [QuoteRequestController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('quote.submit');
 
-// XML Sitemap
-Route::get('/sitemap.xml', [SitemapController::class, 'index'])
-    ->name('sitemap');
-
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes (Breeze)
-|--------------------------------------------------------------------------
-*/
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

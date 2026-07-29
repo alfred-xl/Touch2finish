@@ -2,167 +2,117 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═════════════════════════════════════════════════════════════════════════════
-   BASE LAYER — Touch2finish Global Styles
-   ═════════════════════════════════════════════════════════════════════════════
-   Decisions:
-   - Body text = brand-slate (#485465). NOT teal. Teal is an accent colour.
-   - Headings inherit so page-level text-brand-navy / text-white etc. win.
-   - Smooth scroll on <html> for anchor navigation.
-   - Antialiasing globally for crisper text on all screens.
-   ═════════════════════════════════════════════════════════════════════════════ */
-
 @layer base {
-    html {
-        scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
+    [x-cloak] { display: none !important; }
+    body { @apply bg-touch-white font-sans text-touch-text antialiased; overflow-x: hidden; }
+    h1, h2, h3, h4, h5, h6 { @apply font-display text-touch-text; letter-spacing: -0.025em; }
+    p { line-height: 1.75; }
+    a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid #d9a323; outline-offset: 3px; }
 
-    body {
-        color: #485465;
-        background-color: #ffffff;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        font-family: "Inter", system-ui, sans-serif;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        color: inherit;
-        font-family: "Sora", "Inter", system-ui, sans-serif;
-        letter-spacing: -0.02em;
-    }
-
-    :focus-visible {
-        outline: 2px solid #157d9a;
-        outline-offset: 3px;
-        border-radius: 4px;
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 }
-
-/* ═════════════════════════════════════════════════════════════════════════════
-   COMPONENT LAYER — Tailwind aliases for the CSS classes defined in layout.blade.php
-   These @apply rules mirror the raw CSS in the layout's <style> block so that
-   Tailwind's purge scanner picks up the class names from template files.
-   ═════════════════════════════════════════════════════════════════════════════ */
 
 @layer components {
-    /* ── Button system ──────────────────────────────────────────────────── */
+    .site-body { @apply flex min-h-screen flex-col bg-touch-white; }
+    .site-container { @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8; }
+    .section-shell { @apply py-16 sm:py-20 lg:py-24; }
 
-    /* PRIMARY CTA — gold. Use for: Get a Quote, Submit, Work With Us, all main actions */
-    .btn-primary {
-        @apply inline-flex items-center gap-2 font-bold text-sm text-white
-               rounded-xl px-8 py-3.5
-               transition-all duration-200;
-        background: #e2ae49;
-        box-shadow: 0 4px 20px -2px rgba(226, 174, 73, 0.32);
-    }
-    .btn-primary:hover {
-        background: #d9a43e;
-        box-shadow: 0 10px 28px -4px rgba(226, 174, 73, 0.48);
-        transform: translateY(-2px);
-    }
-    .btn-primary:active {
-        transform: translateY(0);
-    }
+    .site-header { @apply sticky top-0 z-50 border-b border-touch-border bg-white; }
+    .nav-link { @apply relative inline-flex min-h-[44px] items-center text-sm font-semibold text-touch-text transition-colors duration-200; }
+    .nav-link::after { content: ""; @apply absolute inset-x-0 bottom-1 h-0.5 origin-left scale-x-0 bg-touch-gold transition-transform duration-200; }
+    .nav-link:hover, .nav-link:focus-visible { @apply text-touch-dark; }
+    .nav-link:hover::after, .nav-link:focus-visible::after { @apply scale-x-100; }
+    .mobile-menu-button { @apply inline-flex h-11 w-11 items-center justify-center rounded-md text-touch-dark transition-colors hover:bg-touch-soft; }
+    .mobile-menu { @apply border-t border-touch-border bg-white; }
+    .mobile-nav-link { @apply flex min-h-[46px] items-center border-b border-touch-border/70 px-1 text-sm font-semibold text-touch-text transition-colors hover:text-touch-deep; }
 
-    /* SECONDARY — teal solid. Use for: secondary/supporting actions */
-    .btn-secondary {
-        @apply inline-flex items-center gap-2 font-bold text-sm text-white
-               rounded-xl px-8 py-3.5
-               transition-all duration-200;
-        background: #157d9a;
-        box-shadow: 0 4px 20px -2px rgba(21, 125, 154, 0.22);
-    }
-    .btn-secondary:hover {
-        background: #0d5876;
-        box-shadow: 0 10px 28px -4px rgba(21, 125, 154, 0.32);
-        transform: translateY(-2px);
-    }
-    .btn-secondary:active {
-        transform: translateY(0);
-    }
+    .btn-primary, .btn-secondary, .btn-text, .btn-nav, .btn-ghost { @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-md px-6 py-3 text-center text-sm font-bold transition duration-200; }
+    .btn-primary:hover, .btn-secondary:hover, .btn-nav:hover, .btn-ghost:hover { transform: translateY(-1px); }
+    .btn-text i, a:has(> i[data-lucide="arrow-right"]) i { transition: transform 200ms ease; }
+    .btn-text:hover i, a:has(> i[data-lucide="arrow-right"]):hover i { transform: translateX(4px); }
+    .btn-primary, .btn-nav { @apply bg-touch-gold text-touch-dark hover:bg-[#c8941d]; }
+    .btn-secondary { @apply border border-touch-dark bg-transparent text-touch-dark hover:bg-touch-soft; }
+    .btn-text { @apply px-0 text-touch-dark hover:text-touch-deep; }
+    .btn-ghost { @apply border border-touch-dark bg-white text-touch-dark hover:bg-touch-soft; }
+    .btn-compact { @apply min-h-[42px] px-5 py-2.5; }
+    button:disabled { @apply cursor-not-allowed opacity-65; }
 
-    /* GHOST — transparent + border. Use on dark/navy/hero backgrounds */
-    .btn-ghost {
-        @apply inline-flex items-center gap-2 font-bold text-sm text-white
-               rounded-xl px-8 py-3.5 backdrop-blur-sm
-               transition-all duration-200;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1.5px solid rgba(255, 255, 255, 0.22);
-    }
-    .btn-ghost:hover {
-        background: rgba(255, 255, 255, 0.18);
-        border-color: rgba(255, 255, 255, 0.38);
-    }
+    .eyebrow, .gold-badge { @apply inline-flex items-center text-xs font-bold uppercase tracking-[0.16em] text-touch-gold; }
+    .section-heading { @apply font-display text-3xl font-bold leading-tight text-touch-dark sm:text-4xl; }
+    .gold-rule { @apply block h-0.5 w-12 bg-touch-gold; }
 
-    /* NAV — compact gold CTA in the header */
-    .btn-nav {
-        @apply inline-flex items-center gap-2 font-bold text-sm text-white
-               rounded-xl px-5 py-2.5
-               transition-all duration-200;
-        background: #e2ae49;
-        box-shadow: 0 3px 14px -2px rgba(226, 174, 73, 0.3);
-    }
-    .btn-nav:hover {
-        background: #d9a43e;
-        box-shadow: 0 6px 20px -3px rgba(226, 174, 73, 0.45);
-        transform: translateY(-1px);
-    }
+    .hero-media { @apply relative overflow-hidden rounded-lg bg-touch-soft; }
+    .hero-media::after { content: ""; @apply pointer-events-none absolute inset-0 border border-touch-border; }
+    .hero-media img { @apply h-full min-h-[280px] w-full object-cover sm:min-h-[360px] lg:min-h-[480px]; }
+    .trust-strip { @apply border-y border-touch-border bg-white; }
+    .trust-item { @apply flex items-start gap-3 px-0 py-5 sm:px-5; }
+    .trust-icon { @apply mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-touch-soft text-touch-gold; }
 
-    /* ICON — square icon button (social icons, etc.) */
-    .btn-icon {
-        @apply inline-flex items-center justify-center
-               w-9 h-9 rounded-lg text-white
-               transition-colors duration-200;
-        background: rgba(255, 255, 255, 0.1);
-    }
-    .btn-icon:hover {
-        background: #e2ae49;
-    }
+    .service-trigger { @apply flex w-full items-center gap-4 py-5 text-touch-muted transition-colors hover:text-touch-dark; }
+    .service-trigger--active { @apply text-touch-dark; }
+    .service-number { @apply w-8 shrink-0 text-left text-xs font-bold tracking-widest text-touch-gold; }
+    .service-detail-panel { @apply overflow-hidden rounded-lg border border-touch-border bg-white; }
+    .service-visual { @apply flex min-h-[220px] flex-col items-center justify-center border-b border-touch-border bg-touch-soft p-8 text-center; }
+    .service-image-frame { @apply aspect-[4/3] overflow-hidden rounded-lg border border-touch-border bg-touch-soft; }
+    .service-image-frame img { @apply h-full w-full object-cover; transition: transform 300ms ease; }
+    .service-image-frame:hover img { transform: scale(1.015); }
 
-    /* ── Brand helpers ──────────────────────────────────────────────────── */
+    .process-list { @apply relative grid gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-0; }
+    .process-step { @apply relative border-l border-touch-border pl-6 lg:border-l-0 lg:border-t lg:px-6 lg:pt-8 first:lg:pl-0 last:lg:pr-0; }
+    .process-number { @apply inline-flex h-9 w-9 items-center justify-center rounded-full bg-touch-dark text-xs font-bold text-white lg:absolute lg:-top-[18px] lg:left-6 first:lg:left-0; }
 
-    /* Eyebrow label above section headings */
-    .eyebrow {
-        @apply inline-block font-bold tracking-widest uppercase text-xs mb-3 px-3 py-1 rounded-full;
-        color: #e2ae49;
-        background: rgba(226, 174, 73, 0.1);
-    }
+    .postcode-callout { @apply rounded-lg border border-touch-border bg-white p-7 sm:p-9; }
+    .contact-method { @apply flex min-h-[72px] items-center gap-4 py-4 transition-colors hover:bg-white/70; }
+    .quote-form-shell { @apply rounded-lg border border-touch-border bg-white p-5 sm:p-8 lg:p-10; }
+    .form-label { @apply mb-2 block text-sm font-semibold text-touch-dark; }
+    .form-label span { @apply text-touch-gold; }
+    .form-error { @apply mt-2 text-sm text-red-700; }
+    .t2f-input { @apply w-full rounded-md border border-touch-border bg-white px-4 py-3 text-base text-touch-text placeholder:text-touch-muted/70; }
+    .t2f-input:focus { @apply border-touch-deep ring-2 ring-touch-deep/20; outline: none; }
+    .t2f-input.error { @apply border-red-500; }
+    .faq-trigger { @apply flex min-h-[64px] w-full items-center justify-between gap-5 py-5 text-left font-display text-base font-semibold text-touch-dark sm:text-lg; }
 
-    /* Section heading — navy, Sora, tight leading */
-    .section-heading {
-        @apply text-3xl md:text-4xl font-black leading-tight;
-        color: #071b3b;
-        font-family: "Sora", "Inter", system-ui, sans-serif;
-    }
+    .service-overview-visual { @apply grid min-h-[320px] grid-cols-1 content-center gap-5 rounded-lg border border-touch-border bg-white p-8 sm:grid-cols-2; }
+    .service-summary-row { @apply grid items-center gap-8 py-10 lg:grid-cols-[1.15fr_.85fr] lg:gap-16 lg:py-16; }
+    .service-summary-visual { @apply flex min-h-[240px] flex-col items-center justify-center rounded-lg border border-touch-border bg-touch-soft p-8 text-center; }
+    .service-hero-image { @apply min-h-[300px] w-full rounded-lg border border-touch-border object-cover sm:min-h-[420px]; }
+    .service-hero-fallback { @apply flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-touch-border bg-white p-8 text-center sm:min-h-[420px]; }
 
-    /* Gold accent rule / divider */
-    .gold-rule {
-        @apply block rounded-full;
-        width: 3.5rem;
-        height: 3px;
-        background: #e2ae49;
-    }
+    .site-footer { @apply bg-touch-dark text-white; }
+    .footer-heading { @apply font-display text-sm font-semibold text-white; }
+    .footer-link { @apply text-white/70 transition-colors hover:text-touch-gold; }
+    .footer-icon-link { @apply inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/20 text-white transition-colors hover:border-touch-gold hover:text-touch-gold; }
+    .mobile-action-bar { @apply fixed inset-x-0 bottom-0 z-50 grid h-[4.25rem] grid-cols-3 border-t border-touch-border bg-white px-2 pb-[env(safe-area-inset-bottom)]; }
+    .mobile-action-link { @apply flex min-w-0 flex-col items-center justify-center gap-1 text-[11px] font-semibold text-touch-dark; }
+    .mobile-action-link--primary { @apply my-2 rounded-md bg-touch-gold px-2; }
 }
 
-/* ═════════════════════════════════════════════════════════════════════════════
-   UTILITY LAYER
-   ═════════════════════════════════════════════════════════════════════════════ */
-
 @layer utilities {
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-    .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
+    .text-balance { text-wrap: balance; }
+}
 
-    .text-balance {
-        text-wrap: balance;
-    }
+html.js [data-reveal] { opacity: 0; transition: opacity 550ms cubic-bezier(0.22, 1, 0.36, 1), transform 550ms cubic-bezier(0.22, 1, 0.36, 1); transition-delay: var(--reveal-delay, 0ms); }
+html.js [data-reveal="fade-up"] { transform: translateY(18px); }
+html.js [data-reveal="fade-in"] { transform: scale(.99); }
+html.js [data-reveal="slide-left"] { transform: translateX(18px); }
+html.js [data-reveal="slide-right"] { transform: translateX(-18px); }
+html.js [data-reveal].is-visible { opacity: 1; transform: none; }
+
+@media (max-width: 767px) {
+    html.js [data-reveal="slide-left"], html.js [data-reveal="slide-right"] { transform: translateY(18px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.js [data-reveal], html.js [data-reveal].is-visible { opacity: 1; transform: none; transition: none; }
+    .service-image-frame:hover img, .btn-primary:hover, .btn-secondary:hover, .btn-nav:hover, .btn-ghost:hover { transform: none; }
 }

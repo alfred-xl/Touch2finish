@@ -115,6 +115,6 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
-    'contact_receiver' => env('CONTACT_RECEIVER_EMAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+    'contact_receiver' => env('CONTACT_RECEIVER_EMAIL', 'info@touch2finish.co.uk'),
 
 ];

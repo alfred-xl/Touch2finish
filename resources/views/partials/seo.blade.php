@@ -1,11 +1,11 @@
-@php
+﻿@php
     $siteName = config('app.name', 'Touch2finish');
     $pageTitle = isset($title)
         ? trim((string) $title)
-        : 'Touch2finish | Premium Trade Services — Standard is Everything';
+        : 'Touch2finish | Valeting, Cleaning, Removals and Property Services';
     $pageDesc = isset($description)
         ? trim((string) $description)
-        : 'Touch2finish provides premium removals, handyman, car valeting, interior decor, refurbishment, real estate development, and cleaning services across the UK.';
+        : 'Touch2finish provides mobile car valeting, domestic and commercial cleaning, removals, handyman and refurbishment services for homes, vehicles and businesses.';
     $canonical = isset($canonical) ? trim((string) $canonical) : url()->current();
     $ogImage = isset($ogImage) ? trim((string) $ogImage) : asset('images/og-default.jpeg');
     $robots = isset($robots) ? trim((string) $robots) : 'index, follow';
@@ -21,7 +21,6 @@
 <meta name="description" content="{{ $pageDesc }}">
 <meta name="robots" content="{{ $robots }}">
 <link rel="canonical" href="{{ $canonical }}">
-
 <link rel="sitemap" type="application/xml" title="Sitemap" href="{{ url('/sitemap.xml') }}">
 
 <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -44,8 +43,7 @@
 <meta name="twitter:description" content="{{ $pageDesc }}">
 <meta name="twitter:image" content="{{ $ogImage }}">
 <meta name="twitter:image:alt" content="{{ $siteName }}">
-
-<meta name="theme-color" content="#071B3B">
+<meta name="theme-color" content="#03403F">
 
 @if ($schemaJson)
     <script type="application/ld+json">
