@@ -73,6 +73,49 @@ it('keeps the homepage and quote route available', function () {
     $this->post(route('quote.submit'), [])->assertRedirect(route('home').'#contact')->assertSessionHasErrors(['name', 'email', 'phone', 'postcode', 'service', 'preferred_contact_method', 'message', 'consent']);
 });
 
+it('renders the shortened homepage conversion journey', function () use ($canonicalServices) {
+    $response = $this->get(route('home'))->assertOk()
+        ->assertSee('Clean. Move. Improve.')
+        ->assertSee('Tell us what you need')
+        ->assertSee('Review your quotation')
+        ->assertSee('Confirm and complete')
+        ->assertSee('One service or several &mdash; available across London.', false)
+        ->assertSee('id="about"', false)
+        ->assertSee('id="contact"', false)
+        ->assertDontSee('One clear service structure: Clean. Move. Improve.')
+        ->assertDontSee('Prepared properly for the work ahead.')
+        ->assertDontSee('Office relocation and commercial cleaning')
+        ->assertDontSee('Vehicle valeting for selected business fleets')
+        ->assertDontSee('Ready to clean, move or improve?');
+
+    foreach ($canonicalServices as $slug => $title) {
+        $response->assertSee($title)
+            ->assertSee(route('services.show', ['slug' => $slug]), false)
+            ->assertSee(route('home', ['service' => $slug]).'#contact', false);
+    }
+
+    expect(substr_count($response->getContent(), 'class="faq-trigger"'))->toBe(4);
+    foreach (['Which areas do you cover?', 'Are quotations free?', 'How quickly will I receive a response?', 'Can I combine several services?'] as $question) {
+        $response->assertSee($question);
+    }
+});
+
+it('uses an accessible additional service details disclosure', function () {
+    $this->get(route('home'))->assertOk()
+        ->assertSee('Add more service details')
+        ->assertSee('aria-controls="additional-service-details"', false)
+        ->assertSee('detailsOpen:false', false);
+
+    $this->get(route('home', ['service' => 'mobile-car-valeting']))->assertOk()
+        ->assertSee('detailsOpen:true', false)
+        ->assertSee('value="mobile-car-valeting" selected', false);
+
+    $this->followingRedirects()->post(route('quote.submit'), [
+        'service' => 'mobile-car-valeting',
+        'vehicle_size' => 'invalid-option',
+    ])->assertOk()->assertSee('detailsOpen:true', false)->assertSee('Vehicle size');
+});
+
 it('preselects configured services and ignores invalid query values', function () {
     $this->get(route('home', ['service' => 'mobile-car-valeting']))
         ->assertOk()->assertSee('value="mobile-car-valeting" selected', false);

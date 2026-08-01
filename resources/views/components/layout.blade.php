@@ -27,16 +27,16 @@
     @endphp
     <header id="site-header" class="site-header" x-data="{ open: false }" @keydown.escape.window="open = false">
         <div class="site-container flex h-[4.5rem] items-center justify-between">
-            <a href="/" class="inline-flex shrink-0 items-center" aria-label="Touch2finish home">
+            <a href="{{ route('home') }}" class="inline-flex shrink-0 items-center" aria-label="Touch2finish home">
                 <img src="{{ asset('images/logo.png') }}" alt="Touch2finish" class="h-10 w-auto sm:h-11" width="300" height="100">
             </a>
 
             <nav class="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/#about" class="nav-link">About</a>
+                <a href="{{ route('home') }}" class="nav-link">Home</a>
+                <a href="{{ route('home') }}#about" class="nav-link">About</a>
                 <a href="{{ route('services.index') }}" class="nav-link">Services</a>
-                <a href="/#contact" class="nav-link">Contact</a>
-                <a href="/#contact" class="btn-primary btn-compact">Get a Free Quote</a>
+                <a href="{{ route('home') }}#contact" class="nav-link">Contact</a>
+                <a href="{{ route('home') }}#contact" class="btn-primary btn-compact">Get a Free Quote</a>
             </nav>
 
             <button type="button" class="mobile-menu-button md:hidden" @click="open = !open"
@@ -49,10 +49,10 @@
         <nav id="mobile-menu" x-show="open" x-cloak x-transition.opacity class="mobile-menu md:hidden"
             aria-label="Mobile navigation">
             <div class="site-container flex flex-col py-3">
-                @foreach ([['/', 'Home'], ['/#about', 'About'], [route('services.index'), 'Services'], ['/#contact', 'Contact']] as [$href, $label])
+                @foreach ([[route('home'), 'Home'], [route('home').'#about', 'About'], [route('services.index'), 'Services'], [route('home').'#contact', 'Contact']] as [$href, $label])
                     <a href="{{ $href }}" class="mobile-nav-link" @click="open = false">{{ $label }}</a>
                 @endforeach
-                <a href="/#contact" class="btn-primary mt-3 justify-center" @click="open = false">Get a Free Quote</a>
+                <a href="{{ route('home') }}#contact" class="btn-primary mt-3 justify-center" @click="open = false">Get a Free Quote</a>
             </div>
         </nav>
     </header>
@@ -65,7 +65,7 @@
         <div class="site-container py-14 sm:py-16">
             <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
-                    <a href="/" class="inline-flex" aria-label="Touch2finish home">
+                    <a href="{{ route('home') }}" class="inline-flex" aria-label="Touch2finish home">
                         <img src="{{ asset('images/logo-white.png') }}" alt="Touch2finish" class="h-12 w-auto" width="300" height="100">
                     </a>
                     <p class="mt-5 max-w-sm text-sm leading-6 text-white/70">Professional mobile valeting, cleaning, removals, handyman and property-improvement services for homes, vehicles and businesses.</p>
@@ -89,7 +89,7 @@
                 <nav aria-label="Footer company links">
                     <h2 class="footer-heading">Company</h2>
                     <ul class="mt-5 space-y-3 text-sm">
-                        @foreach ([['/#about', 'About Us'], [route('services.index'), 'Services'], ['/#contact', 'Contact'], ['/#contact', 'Get a Quote']] as [$href, $label])
+                        @foreach ([[route('home').'#about', 'About Us'], [route('services.index'), 'Services'], [route('home').'#contact', 'Contact'], [route('home').'#contact', 'Get a Quote']] as [$href, $label])
                             <li><a href="{{ $href }}" class="footer-link">{{ $label }}</a></li>
                         @endforeach
                     </ul>
@@ -120,7 +120,7 @@
     <nav class="mobile-action-bar md:hidden" aria-label="Quick contact actions">
         <a href="tel:{{ $business['phone_href'] }}" class="mobile-action-link"><i data-lucide="phone" class="h-4 w-4" aria-hidden="true"></i><span>Call</span></a>
         <a href="https://wa.me/{{ $business['whatsapp'] }}" class="mobile-action-link"><i data-lucide="message-circle" class="h-4 w-4" aria-hidden="true"></i><span>WhatsApp</span></a>
-        <a href="/#contact" class="mobile-action-link mobile-action-link--primary"><i data-lucide="file-text" class="h-4 w-4" aria-hidden="true"></i><span>Get a Quote</span></a>
+        <a href="{{ route('home') }}#contact" class="mobile-action-link mobile-action-link--primary"><i data-lucide="file-text" class="h-4 w-4" aria-hidden="true"></i><span>Get a Quote</span></a>
     </nav>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
