@@ -55,6 +55,7 @@ it('publishes only canonical service URLs in the sitemap', function () use ($can
     }
     $response->assertSee(route('areas'), false)->assertSee(route('legal.privacy'), false)
         ->assertSee(route('legal.cookies'), false)->assertSee(route('legal.terms'), false);
+    $response->assertDontSee('<lastmod>', false);
 });
 
 it('publishes London coverage and the legal information pages', function () {
@@ -65,6 +66,33 @@ it('publishes London coverage and the legal information pages', function () {
     $this->get(route('home'))->assertOk()->assertSee(route('legal.privacy'), false)
         ->assertSee('London and surrounding locations considered')
         ->assertSee('"areaServed"', false)->assertSee('"name": "London"', false);
+});
+
+it('links every canonical service from the areas page', function () use ($canonicalServices) {
+    $response = $this->get(route('areas'))->assertOk();
+
+    foreach ($canonicalServices as $slug => $title) {
+        $response->assertSee($title)
+            ->assertSee(route('services.show', ['slug' => $slug]), false);
+    }
+});
+
+it('generates production-domain canonical and sitemap URLs on the production host', function () use ($canonicalServices) {
+    config(['app.url' => 'https://touch2finish.co.uk']);
+    \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
+    \Illuminate\Support\Facades\URL::forceScheme('https');
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('<link rel="canonical" href="https://touch2finish.co.uk">', false)
+        ->assertSee('href="https://touch2finish.co.uk/sitemap.xml"', false);
+
+    $response = $this->get('/sitemap.xml')->assertOk();
+
+    $response->assertSee('<loc>https://touch2finish.co.uk</loc>', false);
+    foreach (array_keys($canonicalServices) as $slug) {
+        $response->assertSee('<loc>https://touch2finish.co.uk/services/'.$slug.'</loc>', false);
+    }
 });
 
 it('keeps the homepage and quote route available', function () {
