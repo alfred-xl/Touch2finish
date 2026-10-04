@@ -1,25 +1,8 @@
 <x-layout>
     <x-slot name="seo">
         @php
-            $serviceSchema = [
-                '@context' => 'https://schema.org',
-                '@type' => 'Service',
-                'name' => $service['title'],
-                'description' => $service['seo_description'],
-                'url' => route('services.show', ['slug' => $service['slug']]),
-                'provider' => [
-                    '@type' => 'LocalBusiness',
-                    '@id' => route('home') . '#business',
-                    'name' => $business['name'],
-                    'url' => route('home'),
-                    'telephone' => $business['phone_display'],
-                    'email' => $business['email'],
-                ],
-            ];
             $hasServiceImage = !empty($service['hero_image']) && is_file(public_path($service['hero_image']));
-            if ($hasServiceImage) {
-                $serviceSchema['image'] = asset($service['hero_image']);
-            }
+            $serviceSchema = \App\Support\Seo::serviceSchema($service, $hasServiceImage ? $service['hero_image'] : null);
         @endphp
         @include('partials.seo', [
             'title' => $service['seo_title'],
@@ -52,7 +35,7 @@
     <section class="section-shell bg-white">
         <div class="site-container grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
             <div><p class="eyebrow">About This Service</p><h2 class="mt-5 section-heading">Support shaped around the requirement.</h2></div>
-            <div class="space-y-5">@foreach ($service['introduction'] as $paragraph)<p class="text-base leading-7 text-touch-muted sm:text-lg">{{ $paragraph }}</p>@endforeach</div>
+            <div class="space-y-5">@foreach ($service['introduction'] as $paragraph)<p class="text-base leading-7 text-touch-muted sm:text-lg">{{ $paragraph }}</p>@endforeach<p class="text-base leading-7 text-touch-muted">Our primary service area is London. For availability and requests outside London, see <a href="{{ route('areas') }}" class="font-semibold text-touch-dark underline underline-offset-4">Areas We Cover</a>, then send your postcode with your enquiry.</p></div>
         </div>
     </section>
 
@@ -79,7 +62,7 @@
     </section>
 
     @if ($relatedServices)
-        <section class="section-shell bg-white"><div class="site-container"><p class="eyebrow">Related Services</p><h2 class="mt-5 section-heading">Other ways Touch2finish can help.</h2><div class="mt-8 divide-y divide-touch-border border-y border-touch-border">@foreach ($relatedServices as $related)<a href="{{ route('services.show', ['slug' => $related['slug']]) }}" class="flex min-h-[70px] items-center justify-between gap-5 py-4 text-touch-dark hover:text-touch-deep"><span><span class="font-display font-semibold">{{ $related['title'] }}</span><span class="mt-1 block text-sm font-normal text-touch-muted">{{ $related['summary'] }}</span></span><i data-lucide="arrow-right" class="h-5 w-5 shrink-0" aria-hidden="true"></i></a>@endforeach</div></div></section>
+        <section class="section-shell bg-white"><div class="site-container"><p class="eyebrow">Related Services</p><h2 class="mt-5 section-heading">Other ways Touch2Finish can help.</h2><div class="mt-8 divide-y divide-touch-border border-y border-touch-border">@foreach ($relatedServices as $related)<a href="{{ route('services.show', ['slug' => $related['slug']]) }}" class="flex min-h-[70px] items-center justify-between gap-5 py-4 text-touch-dark hover:text-touch-deep"><span><span class="font-display font-semibold">{{ $related['title'] }}</span><span class="mt-1 block text-sm font-normal text-touch-muted">{{ $related['summary'] }}</span></span><i data-lucide="arrow-right" class="h-5 w-5 shrink-0" aria-hidden="true"></i></a>@endforeach</div></div></section>
     @endif
 
     <section class="bg-touch-soft py-14 sm:py-16"><div class="site-container flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between"><div><h2 class="font-display text-2xl font-bold text-touch-dark sm:text-3xl">{{ $service['cta_heading'] }}</h2><p class="mt-3 max-w-2xl text-base leading-7 text-touch-muted">{{ $service['cta_copy'] }}</p></div><div class="flex flex-col gap-3 sm:flex-row"><a href="{{ route('home', ['service' => $service['slug']]) }}#contact" class="btn-primary">Get a Free Quote</a><a href="tel:{{ $business['phone_href'] }}" class="btn-secondary">{{ $business['phone_display'] }}</a></div></div></section>

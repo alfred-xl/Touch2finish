@@ -1,4 +1,4 @@
-# robots.txt — Touch2finish
+# robots.txt — Touch2Finish
 # Served at: https://touch2finish.co.uk/robots.txt
 
 User-agent: *

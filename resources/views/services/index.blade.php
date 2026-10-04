@@ -1,8 +1,8 @@
 <x-layout>
     <x-slot name="seo">
         @include('partials.seo', [
-            'title' => 'Services | Touch2finish',
-            'description' => 'Explore mobile valeting, cleaning, removals, handyman and refurbishment services from Touch2finish for homes, vehicles and businesses.',
+            'title' => 'Services | Touch2Finish London',
+            'description' => 'Explore Touch2Finish valeting, cleaning, removals, handyman and refurbishment services across London, UK. Enquire about your postcode and requirements.',
             'canonical' => route('services.index'),
         ])
     </x-slot>
@@ -12,14 +12,15 @@
             <div>
                 <p class="eyebrow">Our Services</p>
                 <h1 class="mt-5 max-w-3xl font-display text-4xl font-extrabold leading-tight text-touch-dark sm:text-5xl">Professional support for your vehicle, property and move.</h1>
-                <p class="mt-6 max-w-2xl text-base leading-7 text-touch-muted sm:text-lg">Touch2finish provides mobile valeting, cleaning, removals, handyman and refurbishment services for homes, vehicles and businesses, primarily across London.</p>
+                <p class="mt-6 max-w-2xl text-base leading-7 text-touch-muted sm:text-lg">Touch2Finish provides mobile valeting, cleaning, removals, handyman and refurbishment services for homes, vehicles and businesses, primarily across London.</p>
                 <p class="mt-4 max-w-2xl text-base leading-7 text-touch-muted">Customers can request one service or discuss a coordinated requirement involving several compatible services.</p>
+                <p class="mt-4 max-w-2xl text-base leading-7 text-touch-muted">See <a href="{{ route('areas') }}" class="font-semibold text-touch-dark underline underline-offset-4">Areas We Cover</a> for London availability and enquiries outside London.</p>
                 <div class="mt-8 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ route('home') }}#contact" class="btn-primary">Get a Free Quote</a>
-                    <a href="tel:{{ $business['phone_href'] }}" class="btn-secondary">Call Touch2finish</a>
+                    <a href="tel:{{ $business['phone_href'] }}" class="btn-secondary">Call Touch2Finish</a>
                 </div>
             </div>
-            <div class="service-overview-visual" aria-label="Touch2finish service categories">
+            <div class="service-overview-visual" aria-label="Touch2Finish service categories">
                 @foreach ($services as $service)
                     <span class="inline-flex items-center gap-2 text-sm font-semibold text-touch-dark"><i data-lucide="{{ $service['icon'] }}" class="h-5 w-5 text-touch-gold" aria-hidden="true"></i>{{ $service['short_title'] }}</span>
                 @endforeach
@@ -78,7 +79,7 @@
 
     <section class="section-shell bg-touch-dark text-white">
         <div class="site-container grid gap-10 lg:grid-cols-2 lg:gap-20">
-            <div><p class="eyebrow">Combined Services</p><h2 class="mt-5 font-display text-3xl font-bold text-white sm:text-4xl">Need more than one service?</h2><p class="mt-5 text-base leading-7 text-white/75">Some requirements involve several connected tasks. Touch2finish can review compatible services and help organise the work through one point of contact.</p><a href="{{ route('home', ['service' => 'combined-services']) }}#contact" class="btn-primary mt-8">Discuss a Combined Service</a></div>
+            <div><p class="eyebrow">Combined Services</p><h2 class="mt-5 font-display text-3xl font-bold text-white sm:text-4xl">Need more than one service?</h2><p class="mt-5 text-base leading-7 text-white/75">Some requirements involve several connected tasks. Touch2Finish can review compatible services and help organise the work through one point of contact.</p><a href="{{ route('home', ['service' => 'combined-services']) }}#contact" class="btn-primary mt-8">Discuss a Combined Service</a></div>
             <ul class="divide-y divide-white/15 border-y border-white/15">@foreach (['Removals and furniture assembly', 'Cleaning and minor repairs', 'Decorating and post-work cleaning', 'Office relocation and commercial cleaning'] as $example)<li class="py-4 text-sm text-white/80">{{ $example }}</li>@endforeach</ul>
         </div>
     </section>

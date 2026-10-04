@@ -23,7 +23,7 @@ Use Supervisor, systemd, or the hosting platform's worker facility to keep that 
 
 ## Production deployment
 
-Set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, `APP_TIMEZONE=Europe/London`, the production database credentials, a real mail transport, and `CONTACT_RECEIVER_EMAIL`. Then run:
+Set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://touch2finish.co.uk`, `APP_TIMEZONE=Europe/London`, the production database credentials, a real mail transport, and `CONTACT_RECEIVER_EMAIL`. Then run:
 
 ```sh
 composer install --no-dev --optimize-autoloader
@@ -38,6 +38,10 @@ php artisan queue:restart
 ```
 
 Ensure `storage` and `bootstrap/cache` are writable by the application user and serve the site through the `public` directory.
+
+Canonical URLs, sitemap entries and schema identity come from `touch2finish.business.url`. In production, generated application URLs use that same root. Configure HTTP-to-HTTPS and www-to-apex permanent redirects in Cloudflare or the web server; Laravel URL forcing does not redirect incoming requests. Do not configure redirects for domains the business does not control.
+
+See [Entity SEO implementation and deployment notes](docs/entity-seo.md) for configuration, schema, checks and remaining external actions.
 
 ## Verification
 

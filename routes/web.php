@@ -6,6 +6,7 @@ use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
+Route::view('/about', 'about')->name('about');
 Route::view('/areas-we-cover', 'areas-we-cover')->name('areas');
 Route::view('/privacy-policy', 'legal.privacy-policy')->name('legal.privacy');
 Route::view('/cookie-policy', 'legal.cookie-policy')->name('legal.cookies');

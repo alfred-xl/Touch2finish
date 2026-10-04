@@ -2,7 +2,15 @@
 
 return [
     'business' => [
-        'name' => 'Touch2finish',
+        'name' => 'Touch2Finish',
+        // Legal name and number checked against Companies House record 17277580.
+        'legal_name' => 'Touch2finish Services Ltd',
+        'company_number' => '17277580',
+        'url' => 'https://touch2finish.co.uk',
+        'country' => 'GB',
+        'country_name' => 'United Kingdom',
+        // Official, owner-verified profiles only: 'Platform name' => 'https://...'.
+        'social_profiles' => [],
         'tagline' => 'Clean. Move. Improve.',
         'phone_display' => '+44 7456 490 400',
         'phone_href' => '+447456490400',
@@ -14,8 +22,14 @@ return [
     'service_area' => [
         'primary' => 'London',
         'short_label' => 'London and surrounding locations',
-        'summary' => 'Touch2finish primarily serves customers across London. Requests outside London may also be considered depending on the service, travel distance, job size and availability.',
+        'summary' => 'Touch2Finish primarily serves customers across London. Requests outside London may also be considered depending on the service, travel distance, job size and availability.',
     ],
+
+    // Unpublished until unique, verified local content is available. Future entries:
+    // slug, name, region, postcode_districts, introduction, services_available,
+    // local_service_notes, faqs, seo_title, seo_description, nearby_areas.
+    // Adding data alone must not publish a route or add a sitemap entry.
+    'locations' => [],
 
     'services' => [
         'mobile-car-valeting' => [
@@ -31,7 +45,7 @@ return [
             'image_position' => 'center',
             'summary' => 'Professional interior and exterior vehicle care delivered at your home, workplace or another agreed location.',
             'introduction' => [
-                'Touch2finish provides mobile valeting for private cars, work vehicles, vans and selected business fleets.',
+                'Touch2Finish provides mobile valeting for private cars, work vehicles, vans and selected business fleets.',
                 'The required service should be based on the vehicle type, size, current condition, location and desired result. Customers should provide accurate details so the team can recommend the appropriate level of care.',
             ],
             'inclusions' => ['Interior vacuuming', 'Dashboard and trim cleaning', 'Internal glass cleaning', 'Exterior vehicle washing', 'Wheel and tyre cleaning', 'Mat cleaning', 'Selected upholstery cleaning', 'Selected leather cleaning and conditioning', 'Full interior and exterior valeting', 'Scheduled fleet-care support'],
@@ -49,8 +63,8 @@ return [
             'related_services' => ['domestic-commercial-cleaning'],
             'cta_heading' => 'Ready to refresh your vehicle?',
             'cta_copy' => 'Send the vehicle details, service postcode and preferred date for a tailored quotation.',
-            'seo_title' => 'Mobile Car Valeting | Touch2finish',
-            'seo_description' => 'Request mobile interior and exterior car valeting from Touch2finish for private vehicles, work vehicles, vans and selected fleets.',
+            'seo_title' => 'Mobile Car Valeting | Touch2Finish',
+            'seo_description' => 'Request mobile interior and exterior car valeting from Touch2Finish for private vehicles, work vehicles, vans and selected fleets.',
         ],
 
         'domestic-commercial-cleaning' => [
@@ -66,7 +80,7 @@ return [
             'image_position' => 'center',
             'summary' => 'Flexible cleaning services for homes, offices, rental properties and selected commercial spaces.',
             'introduction' => [
-                'Touch2finish provides cleaning services based on the property type, size, condition and required result.',
+                'Touch2Finish provides cleaning services based on the property type, size, condition and required result.',
                 'Customers may request regular domestic cleaning, one-off cleaning, deep cleaning, move-in cleaning, end-of-tenancy cleaning or selected commercial arrangements.',
             ],
             'inclusions' => ['Regular domestic cleaning', 'One-off cleaning', 'Deep cleaning', 'Move-in cleaning', 'End-of-tenancy cleaning', 'Office cleaning', 'Commercial-space cleaning', 'Landlord property-turnaround cleaning', 'Post-refurbishment cleaning', 'Post-work cleaning'],
@@ -75,17 +89,17 @@ return [
             'quote_requirements' => ['Property postcode', 'Property type', 'Number of bedrooms', 'Number of bathrooms', 'Approximate property size', 'Required cleaning type', 'Current condition', 'Occupied or vacant status', 'Preferred date', 'Access information', 'Photographs where useful'],
             'process' => ['Describe the property and required cleaning', 'Share the property details and preferred date', 'Receive and approve the quotation', 'The agreed cleaning service is completed and reviewed'],
             'faqs' => [
-                ['question' => 'Do you bring cleaning products and equipment?', 'answer' => 'This depends on the selected service. The quotation will explain what Touch2finish provides and whether any specialist products or equipment are charged separately.'],
+                ['question' => 'Do you bring cleaning products and equipment?', 'answer' => 'This depends on the selected service. The quotation will explain what Touch2Finish provides and whether any specialist products or equipment are charged separately.'],
                 ['question' => 'Is oven cleaning automatically included?', 'answer' => 'Oven cleaning should only be considered included when it is specifically selected or confirmed in the quotation.'],
                 ['question' => 'Do you offer end-of-tenancy cleaning?', 'answer' => 'End-of-tenancy cleaning may be provided based on the property size, condition, access and required checklist.'],
-                ['question' => 'Can you guarantee the return of a tenancy deposit?', 'answer' => 'No cleaning company controls a landlord or agent’s deposit decision. Touch2finish can complete the agreed cleaning scope but should not guarantee deposit return.'],
+                ['question' => 'Can you guarantee the return of a tenancy deposit?', 'answer' => 'No cleaning company controls a landlord or agent’s deposit decision. Touch2Finish can complete the agreed cleaning scope but should not guarantee deposit return.'],
                 ['question' => 'Can commercial cleaning take place outside normal hours?', 'answer' => 'Alternative scheduling may be available for selected commercial clients, subject to confirmation.'],
             ],
             'related_services' => ['handyman-property-maintenance', 'refurbishment-decorating'],
             'cta_heading' => 'Tell us about the property.',
             'cta_copy' => 'Share the postcode, property size, current condition and required cleaning service.',
-            'seo_title' => 'Domestic and Commercial Cleaning | Touch2finish',
-            'seo_description' => 'Request domestic, deep, end-of-tenancy, office and selected commercial cleaning services from Touch2finish.',
+            'seo_title' => 'Domestic and Commercial Cleaning | Touch2Finish',
+            'seo_description' => 'Request domestic, deep, end-of-tenancy, office and selected commercial cleaning services from Touch2Finish.',
         ],
 
         'removals-man-and-van' => [
@@ -101,7 +115,7 @@ return [
             'image_position' => 'center',
             'summary' => 'Support for home moves, office relocations, furniture transport and individual-item collections.',
             'introduction' => [
-                'Touch2finish helps customers organise selected moving and transportation requirements.',
+                'Touch2Finish helps customers organise selected moving and transportation requirements.',
                 'The appropriate quotation should consider the collection location, destination, property access, item quantity, required vehicle, staffing and expected duration.',
             ],
             'inclusions' => ['House removals', 'Flat and apartment moves', 'Office relocation', 'Furniture transportation', 'Single-item collection and delivery', 'Man-and-van support', 'Internal furniture movement', 'Furniture dismantling where agreed', 'Furniture reassembly where agreed', 'Landlord and tenant moves'],
@@ -119,8 +133,8 @@ return [
             'related_services' => ['handyman-property-maintenance', 'domestic-commercial-cleaning'],
             'cta_heading' => 'Planning a move or collection?',
             'cta_copy' => 'Send the collection location, destination, item details and preferred date.',
-            'seo_title' => 'Removals & Man and Van Services | Touch2finish',
-            'seo_description' => 'Request house moves, office relocations, furniture transport and man-and-van support from Touch2finish.',
+            'seo_title' => 'Removals & Man and Van Services | Touch2Finish',
+            'seo_description' => 'Request house moves, office relocations, furniture transport and man-and-van support from Touch2Finish.',
         ],
 
         'handyman-property-maintenance' => [
@@ -136,7 +150,7 @@ return [
             'image_position' => 'center',
             'summary' => 'Assistance with furniture assembly, mounting, fittings, minor repairs and general property-maintenance tasks.',
             'introduction' => [
-                'Touch2finish provides practical support for customers who have one task or a complete list of smaller property jobs.',
+                'Touch2Finish provides practical support for customers who have one task or a complete list of smaller property jobs.',
                 'Customers should provide a full task list, property location and supporting photographs so the work can be reviewed before a quotation or appointment is confirmed.',
             ],
             'inclusions' => ['Flat-pack furniture assembly', 'Furniture dismantling', 'TV wall mounting', 'Shelf installation', 'Picture and mirror mounting', 'Curtain-pole installation', 'Blind fitting', 'Sealant replacement', 'Minor property repairs', 'Basic fixture installation', 'Landlord maintenance lists', 'Office furniture assembly'],
@@ -155,8 +169,8 @@ return [
             'related_services' => ['removals-man-and-van', 'refurbishment-decorating'],
             'cta_heading' => 'Have a list of property jobs to complete?',
             'cta_copy' => 'Send the complete task list, property location and supporting photographs.',
-            'seo_title' => 'Handyman and Property Maintenance | Touch2finish',
-            'seo_description' => 'Request furniture assembly, mounting, fittings, minor repairs and property-maintenance support from Touch2finish.',
+            'seo_title' => 'Handyman and Property Maintenance | Touch2Finish',
+            'seo_description' => 'Request furniture assembly, mounting, fittings, minor repairs and property-maintenance support from Touch2Finish.',
         ],
 
         'refurbishment-decorating' => [
@@ -172,7 +186,7 @@ return [
             'image_position' => 'center',
             'summary' => 'Selected painting, decorating, repair and property-improvement services for homes, rental properties and businesses.',
             'introduction' => [
-                'Touch2finish supports customers who need to refresh or improve selected interior spaces.',
+                'Touch2Finish supports customers who need to refresh or improve selected interior spaces.',
                 'The quotation should consider the current surface condition, preparation requirements, desired finish, number of rooms, access and preferred schedule.',
             ],
             'inclusions' => ['Interior painting', 'Wall and ceiling preparation', 'Woodwork painting', 'Wallpaper installation', 'Wallpaper removal', 'Feature walls', 'Minor surface repairs', 'Rental-property refreshes', 'Move-in and move-out decorating', 'Office redecoration', 'Selected room refurbishment', 'Post-tenancy property improvements'],
@@ -185,13 +199,13 @@ return [
                 ['question' => 'Can you assist with colour selection?', 'answer' => 'Basic colour and finish guidance may be discussed as part of the project, subject to the service scope.'],
                 ['question' => 'How long will the work take?', 'answer' => 'Duration depends on the room size, surface condition, preparation, drying time, selected finish and number of coats required.'],
                 ['question' => 'Can decorating be combined with cleaning?', 'answer' => 'Yes. Post-work cleaning may be included as part of a coordinated requirement.'],
-                ['question' => 'Do you provide full property development?', 'answer' => 'No. Touch2finish is presented on this website as providing selected decorating, repair, refurbishment and property-improvement services, not real-estate development.'],
+                ['question' => 'Do you provide full property development?', 'answer' => 'No. Touch2Finish is presented on this website as providing selected decorating, repair, refurbishment and property-improvement services, not real-estate development.'],
             ],
             'related_services' => ['handyman-property-maintenance', 'domestic-commercial-cleaning'],
             'cta_heading' => 'Planning to refresh a property?',
             'cta_copy' => 'Send photographs, room details and a description of the result you want to achieve.',
-            'seo_title' => 'Refurbishment and Decorating | Touch2finish',
-            'seo_description' => 'Request interior painting, decorating, preparation, minor repairs and selected refurbishment services from Touch2finish.',
+            'seo_title' => 'Refurbishment and Decorating | Touch2Finish',
+            'seo_description' => 'Request interior painting, decorating, preparation, minor repairs and selected refurbishment services from Touch2Finish.',
         ],
     ],
 

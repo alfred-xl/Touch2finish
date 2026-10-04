@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\Seo;
 use Illuminate\Support\Facades\Route;
 
 it('renders the services overview', function () {
@@ -45,16 +46,16 @@ foreach ($redirects as $from => $to) {
 it('publishes only canonical service URLs in the sitemap', function () use ($canonicalServices) {
     $response = $this->get(route('sitemap'))->assertOk();
 
-    $response->assertSee(route('services.index'), false);
+    $response->assertSee(Seo::route('services.index'), false);
     foreach (array_keys($canonicalServices) as $slug) {
-        $response->assertSee(route('services.show', ['slug' => $slug]), false);
+        $response->assertSee(Seo::route('services.show', ['slug' => $slug]), false);
     }
 
     foreach (array_keys(config('touch2finish.redirects')) as $oldSlug) {
-        $response->assertDontSee('<loc>' . url('/services/' . $oldSlug) . '</loc>', false);
+        $response->assertDontSee('<loc>' . Seo::url('/services/' . $oldSlug) . '</loc>', false);
     }
-    $response->assertSee(route('areas'), false)->assertSee(route('legal.privacy'), false)
-        ->assertSee(route('legal.cookies'), false)->assertSee(route('legal.terms'), false);
+    $response->assertSee(Seo::route('areas'), false)->assertSee(Seo::route('legal.privacy'), false)
+        ->assertSee(Seo::route('legal.cookies'), false)->assertSee(Seo::route('legal.terms'), false);
     $response->assertDontSee('<lastmod>', false);
 });
 
@@ -154,7 +155,7 @@ it('preselects configured services and ignores invalid query values', function (
 it('preserves the removals URL while using the improved customer-facing name', function () {
     $this->get('/services/removals-man-and-van')->assertOk()
         ->assertSee('Removals (Man &amp; Van)', false)
-        ->assertSee('<link rel="canonical" href="'.route('services.show', ['slug' => 'removals-man-and-van']).'">', false);
+        ->assertSee('<link rel="canonical" href="https://touch2finish.co.uk/services/removals-man-and-van">', false);
     $this->get(route('services.index'))->assertOk()->assertSee('Removals (Man &amp; Van)', false);
     $this->get(route('home'))->assertOk()->assertSee('Removals (Man &amp; Van)', false)
         ->assertSee('value="removals-man-and-van"', false)->assertSee('>Removals</a>', false);

@@ -1,8 +1,8 @@
 <x-layout>
     <x-slot name="seo">
         @include('partials.seo', [
-            'title' => 'Areas We Cover | Touch2finish London',
-            'description' => 'Touch2finish primarily provides valeting, cleaning, removals, handyman and refurbishment services across London, with other locations considered depending on the requirement.',
+            'title' => 'Areas We Cover | Touch2Finish London',
+            'description' => 'Touch2Finish primarily provides valeting, cleaning, removals, handyman and refurbishment services across London, with other locations considered depending on the requirement.',
             'canonical' => route('areas'),
         ])
     </x-slot>
@@ -11,7 +11,8 @@
         <div class="site-container max-w-4xl" data-reveal="fade-up">
             <p class="eyebrow">Areas We Cover</p>
             <h1 class="mt-5 font-display text-4xl font-extrabold text-touch-dark sm:text-5xl">Services across London.</h1>
-            <p class="mt-6 max-w-2xl text-lg text-touch-muted">Touch2finish primarily serves customers across London. Send us your postcode and required service so we can confirm current availability.</p>
+            <p class="mt-6 max-w-2xl text-lg text-touch-muted">Touch2Finish primarily serves customers across London. Send us your postcode and required service so we can confirm current availability.</p>
+            <p class="mt-4 max-w-2xl text-base leading-7 text-touch-muted">Our UK services are operated by {{ config('touch2finish.business.legal_name') }}. <a href="{{ route('about') }}" class="font-semibold text-touch-dark underline underline-offset-4">Learn about Touch2Finish</a> or return to the <a href="{{ route('home') }}" class="font-semibold text-touch-dark underline underline-offset-4">Touch2Finish homepage</a>.</p>
         </div>
     </section>
 
@@ -34,6 +35,7 @@
         <div class="site-container">
             <p class="eyebrow">Available Services</p>
             <h2 class="section-heading mt-5">Explore services in your area.</h2>
+            <a href="{{ route('services.index') }}" class="btn-text mt-5">View all services</a>
             <p class="mt-5 max-w-2xl text-touch-muted">Review the service that matches your requirements, then send your postcode so we can confirm coverage and availability.</p>
 
             <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

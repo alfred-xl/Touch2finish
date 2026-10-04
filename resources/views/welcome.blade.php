@@ -6,29 +6,17 @@
         $heroImage = is_file(public_path($preferredHero)) ? $preferredHero : 'images/og-default.jpeg';
         $heroAlt = $heroImage === $preferredHero
             ? 'Representative furniture assembly using a power drill.'
-            : 'Touch2finish property, vehicle and moving services.';
+            : 'Touch2Finish property, vehicle and moving services.';
     @endphp
 
     <x-slot name="seo">
         @php
-            $homeSchema = [
-                '@context' => 'https://schema.org',
-                '@type' => 'LocalBusiness',
-                '@id' => url('/') . '#business',
-                'name' => $business['name'],
-                'description' => 'Mobile car valeting, cleaning, removals, handyman and refurbishment services for homes, vehicles and businesses.',
-                'url' => url('/'),
-                'logo' => ['@type' => 'ImageObject', 'url' => asset('images/logo.png')],
-                'image' => asset($heroImage),
-                'telephone' => $business['phone_display'],
-                'email' => $business['email'],
-                'areaServed' => ['@type' => 'City', 'name' => 'London'],
-            ];
+            $homeSchema = \App\Support\Seo::homeSchema($heroImage);
         @endphp
         @include('partials.seo', [
-            'title' => 'Touch2finish | Valeting, Cleaning, Removals and Property Services',
-            'description' => 'Touch2finish provides mobile car valeting, domestic and commercial cleaning, removals, handyman and refurbishment services for homes, vehicles and businesses.',
-            'canonical' => url('/'),
+            'title' => 'Touch2Finish UK | Valeting, Cleaning, Removals & Property Services',
+            'description' => 'Touch2Finish provides valeting, cleaning, removals, handyman and property services across London, UK. Other locations considered depending on the job.',
+            'canonical' => route('home'),
             'ogImage' => asset($heroImage),
             'schema' => $homeSchema,
         ])
@@ -39,7 +27,7 @@
             <div data-reveal="fade-up">
                 <p class="eyebrow">London Valeting, Cleaning, Removals and Property Services</p>
                 <h1 class="mt-5 max-w-2xl font-display text-4xl font-extrabold leading-[1.08] text-touch-dark sm:text-5xl lg:text-6xl">Clean. Move. Improve.</h1>
-                <p class="mt-6 max-w-xl text-base leading-7 text-touch-text sm:text-lg">Mobile valeting, cleaning, removals, handyman and refurbishment services for homes, vehicles and businesses across London.</p>
+                <p class="mt-6 max-w-xl text-base leading-7 text-touch-text sm:text-lg">Touch2Finish is a UK multi-service business providing mobile car valeting, cleaning, removals, handyman and property improvement services, primarily across London.</p>
                 <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <a href="/#contact" class="btn-primary">Get a Free Quote</a>
                     <a href="{{ route('services.index') }}" class="btn-secondary">Explore Services</a>
@@ -65,8 +53,8 @@
 
     <section id="about" class="scroll-mt-20 bg-white py-12 sm:py-14 lg:py-16">
         <div class="site-container grid gap-5 lg:grid-cols-[.7fr_1.3fr] lg:items-start lg:gap-16" data-reveal="fade-up">
-            <div><p class="eyebrow">About Touch2finish</p><h2 class="mt-5 max-w-xl font-display text-3xl font-bold leading-tight text-touch-dark sm:text-4xl">One dependable team for practical everyday services.</h2></div>
-            <div class="max-w-2xl"><p class="text-base leading-7 text-touch-muted sm:text-lg">Touch2finish brings related vehicle, moving, cleaning and property services together so customers can organise the work through one clear point of contact.</p><a href="/#how-it-works" class="btn-text mt-5">See how the process works <i data-lucide="arrow-right" class="h-4 w-4" aria-hidden="true"></i></a></div>
+            <div><p class="eyebrow">About Touch2Finish</p><h2 class="mt-5 max-w-xl font-display text-3xl font-bold leading-tight text-touch-dark sm:text-4xl">One dependable team for practical everyday services.</h2></div>
+            <div class="max-w-2xl"><p class="text-base leading-7 text-touch-muted sm:text-lg">{{ $business['name'] }} is operated by {{ $business['legal_name'] }}. We bring related vehicle, moving, cleaning and property services together so customers can organise the work through one clear point of contact.</p><a href="{{ route('about') }}" class="btn-text mt-5">About Touch2Finish <i data-lucide="arrow-right" class="h-4 w-4" aria-hidden="true"></i></a></div>
         </div>
     </section>
 
@@ -117,7 +105,7 @@
 
     <section class="bg-[#03403F] py-12 text-white sm:py-14" data-reveal="fade-up">
         <div class="site-container grid gap-8 lg:grid-cols-[1.2fr_.8fr] lg:items-center lg:gap-16">
-            <div><p class="eyebrow">London Coverage</p><h2 class="mt-4 font-display text-3xl font-bold leading-tight text-white sm:text-4xl">One service or several &mdash; available across London.</h2><p class="mt-4 max-w-3xl text-base leading-7 text-white/75">Request one service or combine compatible services such as removals, furniture assembly and cleaning. Touch2finish primarily serves customers across London, while other locations may also be considered depending on the requirement.</p><div class="mt-7 flex flex-col gap-3 sm:flex-row"><a href="/#contact" class="btn-primary">Check Your Postcode</a><a href="{{ route('areas') }}" class="inline-flex min-h-[46px] items-center justify-center rounded-md border border-white/50 px-6 py-3 text-sm font-bold text-white transition hover:border-touch-gold hover:text-touch-gold">Areas We Cover</a></div></div>
+            <div><p class="eyebrow">London Coverage</p><h2 class="mt-4 font-display text-3xl font-bold leading-tight text-white sm:text-4xl">One service or several &mdash; available across London.</h2><p class="mt-4 max-w-3xl text-base leading-7 text-white/75">Request one service or combine compatible services such as removals, furniture assembly and cleaning. Touch2Finish primarily serves customers across London, while other locations may also be considered depending on the requirement.</p><div class="mt-7 flex flex-col gap-3 sm:flex-row"><a href="/#contact" class="btn-primary">Check Your Postcode</a><a href="{{ route('areas') }}" class="inline-flex min-h-[46px] items-center justify-center rounded-md border border-white/50 px-6 py-3 text-sm font-bold text-white transition hover:border-touch-gold hover:text-touch-gold">Areas We Cover</a></div></div>
             <ul class="divide-y divide-white/15 border-y border-white/15">
                 @foreach (['Removals and furniture assembly', 'Cleaning and minor repairs', 'Decorating and post-work cleaning'] as $example)
                     <li class="flex items-center gap-3 py-3 text-sm text-white/85"><i data-lucide="check" class="h-4 w-4 shrink-0 text-touch-gold" aria-hidden="true"></i>{{ $example }}</li>
@@ -130,7 +118,7 @@
         <div class="site-container grid gap-10 lg:grid-cols-[.72fr_1.28fr] lg:gap-16">
             <div data-reveal="fade-up"><p class="eyebrow">Request a Quote</p><h2 class="mt-5 section-heading">Get your free quotation.</h2><p class="mt-5 text-base leading-7 text-touch-muted sm:text-lg">Tell us the service, postcode and preferred date. Add photographs where they help explain the work.</p>
                 <div class="mt-8 divide-y divide-touch-border border-y border-touch-border">
-                    @foreach ([['phone', 'Phone', $business['phone_display'], 'tel:' . $business['phone_href']], ['message-circle', 'WhatsApp', 'Message Touch2finish', 'https://wa.me/' . $business['whatsapp']]] as [$icon, $label, $value, $href])
+                    @foreach ([['phone', 'Phone', $business['phone_display'], 'tel:' . $business['phone_href']], ['message-circle', 'WhatsApp', 'Message Touch2Finish', 'https://wa.me/' . $business['whatsapp']]] as [$icon, $label, $value, $href])
                         <a href="{{ $href }}" class="contact-method"><i data-lucide="{{ $icon }}" class="h-5 w-5 text-touch-gold" aria-hidden="true"></i><span><span class="block text-xs font-bold uppercase tracking-widest text-touch-muted">{{ $label }}</span><span class="mt-1 block text-sm font-semibold text-touch-dark">{{ $value }}</span></span></a>
                     @endforeach
                 </div>
@@ -142,7 +130,7 @@
 
     @php
         $faqs = [
-            ['question' => 'Which areas do you cover?', 'answer' => 'Touch2finish primarily serves customers across London. Other locations may be considered depending on the service, travel distance, job size and availability. Send us your postcode so the team can confirm coverage.'],
+            ['question' => 'Which areas do you cover?', 'answer' => 'Touch2Finish primarily serves customers across London. Other locations may be considered depending on the service, travel distance, job size and availability. Send us your postcode so the team can confirm coverage.'],
             ['question' => 'Are quotations free?', 'answer' => 'Yes. Initial quotations are free and carry no obligation. Some larger or combined-service requirements may need additional information before final pricing.'],
             ['question' => 'How quickly will I receive a response?', 'answer' => 'We aim to respond to enquiries within 24 hours during normal working periods.'],
             ['question' => 'Can I combine several services?', 'answer' => 'Yes. Compatible services can be combined, such as removals, furniture assembly and cleaning.'],
@@ -162,7 +150,7 @@
     @endif
 
     @if (session('error'))
-        <div x-data="{ show: true }" x-show="show" x-cloak class="fixed bottom-24 right-4 z-[60] max-w-sm rounded-md border border-red-300 bg-white p-5 text-touch-text shadow-lg md:bottom-6 md:right-6" role="alert" aria-live="assertive">
+        <div x-data="{ show: true }" x-show="show" x-cloak class="fixed bottom-6 right-4 z-[60] max-w-sm rounded-md border border-red-300 bg-white p-5 text-touch-text shadow-lg md:right-6" role="alert" aria-live="assertive">
             <div class="flex items-start gap-3"><i data-lucide="circle-alert" class="h-5 w-5 shrink-0 text-red-600" aria-hidden="true"></i><div><p class="font-semibold text-touch-dark">Quote request not sent</p><p class="mt-1 text-sm leading-6 text-touch-muted">{{ session('error') }}</p></div><button type="button" @click="show = false" class="ml-auto p-1 text-touch-muted hover:text-touch-dark" aria-label="Dismiss notification"><i data-lucide="x" class="h-4 w-4" aria-hidden="true"></i></button></div>
         </div>
     @endif
